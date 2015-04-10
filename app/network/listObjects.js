@@ -3,24 +3,30 @@ var createUtility = require('component-registry').createUtility;
 
 var IDataFetcher = require('../interfaces').IDataFetcher;
 
-var UserPrototype = require('../components/user');
-var NewsPrototype = require('../components/news');
+var User = require('../components/User');
+var ProtonObject = require('../components/ProtonObject');
 
 var FetchDataUtility = createUtility({
     implements: IDataFetcher,
-    name: 'contentPage',
+    name: 'listObjects',
     
     fetchData: function (params, callback) {
         
         var content = []
         for (var i = 0, imax = 200; i < imax; i++) {
             if (i % 4 == 0) {
-                var tmp = new UserPrototype({
-                    title: "I am User Nr " + i + "!"
+                var tmp = new User({
+                    title: "I am User Nr " + i + "!",
+                    _type: 'User',
+                    _id: "obj_" + i,
+                    _workflowId: ''
                 });
             } else {
-                var tmp = new NewsPrototype({
-                    title: "I am a News Item (" + i + ")"
+                var tmp = new ProtonObject({
+                    title: "I am a Simple Proton Object (" + i + ")",
+                    _type: 'ProtonObject',
+                    _id: "obj_" + i,
+                    _workflowId: ''
                 });
             }
             content.push(tmp);

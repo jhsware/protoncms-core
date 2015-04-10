@@ -29,6 +29,7 @@
     "del": "^1.1.0",
     "gulp": "^3.8.10",
     "gulp-autoprefixer": "^2.0.0",
+    "gulp-nodemon": "^1.0.4",
     "gulp-notify": "^2.0.1",
     "gulp-plumber": "^0.6.6",
     "gulp-sourcemaps": "^1.2.8",
@@ -37,15 +38,19 @@
     "lodash": "^2.4.1",
     "moment": "^2.8.4",
     "node-jsx": "~0.12.3",
-    "react": "~0.12.1",
-    "react-router": "~0.11.4",
+    "react": "~0.13.1",
+    "react-router": "~0.13.2",
     "reactify": "^0.17.1",
     "url": "^0.10.2",
     "vinyl-buffer": "^1.0.0",
     "vinyl-source-stream": "^1.0.0",
     "watchify": "^2.2.1",
     
-    "component-registry": "git://github.com/jhsware/SimpleJSRegistry.git#master"
+    "react-bootstrap": "~0.20.0",
+    
+    "component-registry": "git://github.com/jhsware/SimpleJSRegistry.git#master",
+    "isomorphic-schema": "~0.1.0",
+    "schema-react-formlib": "~0.1.0"
   },
   "devDependencies": {
     "react-tools": "~0.12.1"

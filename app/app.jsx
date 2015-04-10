@@ -17,7 +17,11 @@ if (!global.utilityRegistry) {
 if (!global.adapterRegistry) {
     console.log('[App] Creating component adapter registry');
     var AdapterRegistry = require('component-registry').AdapterRegistry;
-    global.adapterRegistry = new AdapterRegistry();    
+    global.adapterRegistry = new AdapterRegistry();
+    
+    // Register all our input field widgets
+    // Change this to override
+    require('schema-react-formlib').registerAllWidgets(global.adapterRegistry);
 }
 /*
     /END COMPONENT REGISTRY/

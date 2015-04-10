@@ -2,13 +2,15 @@
 var React = require('react');
 var createAdapter = require('component-registry').createAdapter;
 
+var ReactRouter = require('react-router');
+var Link        = ReactRouter.Link;
 
-var IListItem = require('../../interfaces').IListItem;
-var IBaseObject = require('../../interfaces').IBaseObject;
+var IListItemView = require('../../interfaces').IListItemView;
+var IProtonObject = require('../../interfaces').IProtonObject;
 
 var RenderListItem = createAdapter({
-    implements: IListItem,
-    adapts: IBaseObject,
+    implements: IListItemView,
+    adapts: IProtonObject,
     
     ReactComponent: React.createClass({
     
@@ -17,9 +19,9 @@ var RenderListItem = createAdapter({
             var context = this.props.context;
                  
             return (
-                <div className="IListItem">
+                <Link className="IListItemView" to="editObject" params={{workflowId: context._workflowId, objectId: context._id}}>
                     <h2>{context.title}</h2>
-                </div>
+                </Link>
             );
         }
     })

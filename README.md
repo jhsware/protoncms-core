@@ -1,13 +1,17 @@
+## Developer Notes ###
+
+### Interfaces ###
+
 IObject > ObjectPrototype
     title: rw String
     createdAt: ro DateTime
     modifiedAt: ro DateTime
     objectType: ro String
     
-IUser > UserPrototype (Inherits from IObject)
+IUser > User (Inherits from IObject)
 
-IWorkflow
-    getList
+IWorkflowContainer
+    getContent(params)
     
 IWorkflowState: adapter (get and manipulate workflow state on IObject)
     context._workflowState
@@ -37,9 +41,9 @@ IListItemView: adapter (render object in list)
 IListItemEdit: adapter (render object edit view in list)
     ReactComponent
 
-IObjectView: adapter (render object view)
+IViewObject: adapter (render object view)
     ReactComponent
-IObjectEdit: adapter (render object edit view)
+IEditObject: adapter (render object edit view)
     ReactComponent
 
 IContentMenu: marker interface
@@ -49,3 +53,20 @@ IContentMenuItem: utility
 
 IUserWidget: adapts IUserSession
     ReactComponent
+
+
+### Components ###
+
+component-registry
+    - interface
+    - object prototype
+    - adapter
+    - utility
+component-schema
+    - fields
+    - validation
+component-schema-react-forms
+    - react-widgets
+    - form generator
+component-rest
+    - REST API with persitence

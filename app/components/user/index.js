@@ -1,17 +1,21 @@
 'use strict';
 var createObjectPrototype = require('component-registry').createObjectPrototype;
 
-var BaseObjectProto = require('../base_object');
+var ProtonObject = require('../ProtonObject');
 var IUser = require('../../interfaces').IUser;
 
-var UserPrototype = createObjectPrototype({
+var User = createObjectPrototype({
     implements: [IUser],
-    extends: [BaseObjectProto],
+    extends: [ProtonObject],
+
+    _type: 'User',
+    
     title: 'I am a user!',
     role: 'editor'
 })
 
-module.exports = UserPrototype;
+module.exports = User;
 
 // Import views
 require('./listItem');
+require('./editObject');

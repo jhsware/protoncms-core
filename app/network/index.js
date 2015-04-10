@@ -1,4 +1,5 @@
 'use strict';
 
-require('./contentPage');
+require('./listObjects');
+require('./getObjectById');
 require('./notFound');

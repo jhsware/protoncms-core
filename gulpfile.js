@@ -12,6 +12,7 @@ var gulp = require('gulp'),
     source = require('vinyl-source-stream'),
     del = require('del'),
     chalk = require('chalk'),
+    nodemon = require('gulp-nodemon'),
 
     stylusTask = require('./gulp-tasks/stylus');
 
@@ -104,10 +105,27 @@ gulp.task('clean', function (callback) {
     del(paths, callback);
 });
 
+gulp.task('run-server', function () {
+    return nodemon({
+        script: 'server.js',
+        ext: 'js jsx',
+        env: {
+            'NODE_ENV': 'development'
+        },
+        ignore: ['assets']
+    });
+});
+
 // Default watch task
 gulp.task('watch', ['stylus', 'watch-scripts'], function () {
     gulp.watch(['app/**/*.{styl,css}', 'app_nej/stylus/**/*.{styl,css}'], ['stylus']);
 });
+
+// Default watch task
+gulp.task('run', ['stylus', 'watch-scripts', 'run-server'], function () {
+    gulp.watch(['app/**/*.{styl,css}', 'app_nej/stylus/**/*.{styl,css}'], ['stylus']);
+});
+
 
 // Default build task
 gulp.task('default', ['stylus', 'build-scripts']);

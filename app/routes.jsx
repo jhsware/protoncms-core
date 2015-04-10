@@ -9,9 +9,10 @@ var React = require('react/addons'),
 
 module.exports = (
     <Route name="app" path="/" handler={require('./layouts/Master')}>
-        <DefaultRoute handler={require('./pages/start')} />
+        <DefaultRoute handler={require('./pages/list')} />
     
-        <Route path="/start" handler={require('./pages/start')} />
+        <Route path="/:workflowId" handler={require('./pages/list')} />
+        <Route name="editObject" path="/:workflowId/:objectId/edit" handler={require('./pages/edit')} />
 
         <NotFoundRoute handler={require('./pages/not_found')} />
     </Route>
