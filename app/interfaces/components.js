@@ -40,11 +40,17 @@ module.exports.IUser = createInterface({
                 help: 'This is the title of your object, used in lists etc.',
                 required: true
             }),
-            role: validators.textField({
+            role: validators.selectField({
                 label: 'Role',
                 palceholder: 'Enter role here...',
                 help: 'This is the role of your user, used to define privileges.',
-                required: true
+                required: true,
+                valueType: validators.textField(),
+                options: [
+                    {name: "manager", title: "Superadmin"},
+                    {name: "editor", title: "Redaktör"},
+                    {name: "writer", title: "Skribent"}
+                ]
             }),
             description: validators.textField({
                 label: 'Description',
@@ -52,7 +58,9 @@ module.exports.IUser = createInterface({
                 help: 'This describes this user, maybe a fun pun.',
                 required: true
             }),
-            birth_year: validators.textField({
+            birth_year: validators.integerField({
+                min: 1895,
+                max: 2200,
                 label: 'Year of Birth',
                 palceholder: 'Enter a year ie. 1975...',
                 help: 'This is the year of birth... duh...',

@@ -16,10 +16,20 @@ var Component = createAdapter({
     adapts: IUser,
     
     ReactComponent: React.createClass({
+        
+        doSubmit: function (data) {
+            console.log("User submitted:");
+            console.log(data);
+        },
+        
+        doCancel: function (e) {
+            console.log("User canceled!");
+        },
     
         render: function() {
         
             var context = this.props.context;   
+            var formSchema = context._implements[0].schema;
             
             var FormWidget = global.adapterRegistry.getAdapter(context, IAutoFormWidget).ReactComponent;
             
@@ -27,7 +37,12 @@ var Component = createAdapter({
                 <div className="IEditObject">
                     <h2>Edit User</h2>
                     
-                    <FormWidget context={context} />
+                    <FormWidget 
+                        context={context} 
+                        formSchema={formSchema}
+                        
+                        doSubmit={this.doSubmit} 
+                        doCancel={this.doCancel} />
                     
                 </div>
             );
