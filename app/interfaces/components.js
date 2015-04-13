@@ -52,6 +52,12 @@ module.exports.IUser = createInterface({
                 help: 'This describes this user, maybe a fun pun.',
                 required: true
             }),
+            birth_year: validators.textField({
+                label: 'Year of Birth',
+                palceholder: 'Enter a year ie. 1975...',
+                help: 'This is the year of birth... duh...',
+                required: true
+            }),
 
     }),
     

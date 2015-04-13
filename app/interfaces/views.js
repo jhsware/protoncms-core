@@ -61,3 +61,12 @@ module.exports.IUserWidget = createInterface({
         ReactComponent: "ReactComponent"
     }
 });
+
+var IAutoFormWidget = createInterface({
+    name: 'IAutoFormWidget',
+    // Render an object schema as a HTML form
+    members: {
+        ReactComponent: "ReactComponent"
+    }
+});
+module.exports.IAutoFormWidget = IAutoFormWidget;

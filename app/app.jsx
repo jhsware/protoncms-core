@@ -30,6 +30,9 @@ if (!global.adapterRegistry) {
 // Register dataFetchers
 require('./network');
 
+// Register some utilities
+require('./layouts/AutoForm');
+
 function renderApp(req, res, next) {
     Router.run(routes, req.path, function (Handler, state) {
         var dataFetchers = state.routes.filter(function (route) {

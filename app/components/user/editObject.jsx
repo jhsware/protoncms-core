@@ -9,6 +9,7 @@ var IEditObject = require('../../interfaces').IEditObject;
 var IUser = require('../../interfaces').IUser;
 
 var IInputFieldWidget = require('schema-react-formlib').interfaces.IInputFieldWidget;
+var IAutoFormWidget = require('../../interfaces').IAutoFormWidget;
 
 var Component = createAdapter({
     implements: IEditObject,
@@ -20,29 +21,13 @@ var Component = createAdapter({
         
             var context = this.props.context;   
             
-            var theFormEls = [];
-            var schemaFields = context._implements[0].schema._fields;
-            for (var fieldKey in schemaFields) {
-                var InputWidget = global.adapterRegistry.getAdapter(schemaFields['title'], IInputFieldWidget).ReactComponent;
-                theFormEls.push(
-                    <div className="IEditObject-formRow">
-                        <InputWidget
-                            type="text"
-                            value={context[fieldKey]}
-                            placeholder={schemaFields[fieldKey].placeholder}
-                            label={schemaFields[fieldKey].title}
-                            help={schemaFields[fieldKey].help}
-                            hasFeedback
-                            ref="input" />
-                    </div>
-                )
-            };
+            var FormWidget = global.adapterRegistry.getAdapter(context, IAutoFormWidget).ReactComponent;
             
             return (
                 <div className="IEditObject">
                     <h2>Edit User</h2>
                     
-                    {theFormEls}
+                    <FormWidget context={context} />
                     
                 </div>
             );

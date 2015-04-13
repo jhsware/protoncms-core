@@ -1,0 +1,62 @@
+body {
+    box-sizing: content-box;
+}
+
+h1 {
+    text-align: center;
+}
+
+.mainMenu {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 6em;
+    background-color: #aaa;
+    color: white;
+    
+    li {
+        list-style: none;
+        display: inline-block;
+        padding: 2.5em 2em;
+    }
+}
+
+
+
+
+
+.contentMenu {
+    position: absolute;
+    top: 6em;
+    bottom: 0;
+    left: 0;
+    width: 10em;
+    background-color: #eee;
+    padding: 0;
+    list-style: none;
+}
+
+.contentMenu-itemLink {
+    padding: 1em;
+    display: block;
+    
+    &:hover {
+        background-color: white;
+    }
+}
+
+.page {
+    position: absolute;
+    top: 6em;
+    left: 10em;
+    right: 0;
+    
+    padding: 1em 5em;
+    
+}
+
+.wrapper-class,
+.formFieldWrapperClass {
+    position: relative;
+}
