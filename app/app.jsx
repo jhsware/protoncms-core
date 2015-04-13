@@ -21,7 +21,10 @@ if (!global.adapterRegistry) {
     
     // Register all our input field widgets
     // Change this to override
-    require('schema-react-formlib').registerAllWidgets(global.adapterRegistry);
+    require('schema-react-formlib').registerAllWidgets({
+        adapterRegistry: global.adapterRegistry,
+        utilityRegistry: global.utilityRegistry
+    });
 }
 /*
     /END COMPONENT REGISTRY/
