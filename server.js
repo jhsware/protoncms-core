@@ -10,6 +10,8 @@ var nodejsx = require('node-jsx').install({
     extension: '.jsx'
 });
 
+var API = require('./api/app');
+
 var renderApp = require('./app/app').renderApp;
 
 var app = express();
@@ -24,6 +26,9 @@ app.use('/assets', express.static(path.join(__dirname, 'assets')))
 
 // handle favicon
 app.get('/favicon.ico', favIcon)
+
+// API endpoints
+app.use('/api', API);
 
 // Frontend app
 app.use(function (req, res, next) {

@@ -5,6 +5,7 @@ var createAdapter = require('component-registry').createAdapter;
 var ReactRouter = require('react-router');
 var Link        = ReactRouter.Link;
 
+var IProtonObjectPersist = require('../../interfaces').IProtonObjectPersist;
 var IEditObject = require('../../interfaces').IEditObject;
 var IUser = require('../../interfaces').IUser;
 
@@ -42,6 +43,8 @@ var Component = createAdapter({
         doSubmit: function () {
             console.log("User submitted:");
             console.log(this.state.context);
+            
+            global.adapterRegistry.getAdapter(this.state.context, IProtonObjectPersist).persist();
         },
         
         doCancel: function (e) {

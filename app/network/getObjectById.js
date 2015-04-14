@@ -1,5 +1,6 @@
 'use strict';
 var createUtility = require('component-registry').createUtility;
+var httpinvoke = require('httpinvoke');
 
 var IDataFetcher = require('../interfaces').IDataFetcher;
 
@@ -15,26 +16,38 @@ var FetchDataUtility = createUtility({
         var idVal = parseInt(params.objectId.replace("obj_",""));
         
         if (idVal % 2 == 0) {
-            var obj = new ProtonObject({
-                title: "I am a Simple Proton Object",
-                _id: params.objectId,
-                _workflowId: 'xxx'
-            });            
+            var objectType = 'ProtonObject';            
         } else {
-            var obj = new User({
-                title: "I am a User",
-                role: undefined,
-                description: undefined,
-                _id: params.objectId,
-                _workflowId: 'xxx'
-            });
+            var objectType = 'User';
         }
         
-        var outp = {
-            status: 200,
-            body: obj
-        };
-        callback(undefined, outp);
+        if (typeof Window === 'undefined') {
+            var host = 'http://127.0.0.1:5000';
+        } else {
+            var host = '';
+        }
+        var apiPath = host + "/api/" + objectType + '/' + params.objectId;
+        
+        httpinvoke(apiPath, "GET", {
+            outputType: "json",
+            converters: {'text json': JSON.parse},
+            timeout: 5000
+        }, function (err, body, statusCode, headers) {
+            if (err) {
+                console.error('Server Error:');
+                return console.log(err);
+            }; 
+            
+            var ObjectPrototype = require('../components/' + objectType);
+            
+            var obj = new ObjectPrototype(body);
+            
+            var outp = {
+                status: 200,
+                body: obj
+            };
+            callback(undefined, outp);
+        });
     }
 });
 global.utilityRegistry.registerUtility(FetchDataUtility);

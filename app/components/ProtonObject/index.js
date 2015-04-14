@@ -19,4 +19,4 @@ module.exports = ProtonObject;
 // Import views
 require('./listItem');
 require('./editObject');
-
+require('./objectPersist');

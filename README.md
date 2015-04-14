@@ -1,5 +1,12 @@
 ## Developer Notes ###
 
+### TODO ###
+
+TODO: proper data fetching from API with object type handling (can I use flux here, check it out)
+TODO: REST-API with persistence
+TODO: User and session handling
+TODO: More input widgets
+
 ### Interfaces ###
 
 IObject > ObjectPrototype
