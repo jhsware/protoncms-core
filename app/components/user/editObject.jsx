@@ -9,7 +9,10 @@ var IEditObject = require('../../interfaces').IEditObject;
 var IUser = require('../../interfaces').IUser;
 
 var IInputFieldWidget = require('schema-react-formlib').interfaces.IInputFieldWidget;
+var IActionButtonWidget = require('schema-react-formlib').interfaces.IActionButtonWidget;
 var IAutoFormWidget = require('../../interfaces').IAutoFormWidget;
+
+var FormActionBar = require('../../layouts/FormActionBar');
 
 var Component = createAdapter({
     implements: IEditObject,
@@ -17,9 +20,28 @@ var Component = createAdapter({
     
     ReactComponent: React.createClass({
         
-        doSubmit: function (data) {
+
+        didUpdate: function (data) {
+            var state = this.state;
+            state.context = data;
+            this.setState(state);
+        },
+        
+        getInitialState: function () {
+            var state = {};
+            state.context = this.props.context;
+            return state;
+        },
+        
+        componentWillReceiveProps: function (nextProps) {
+            var state = this.state;
+            state.context = nextProps.context;
+            this.setState(state);
+        },
+        
+        doSubmit: function () {
             console.log("User submitted:");
-            console.log(data);
+            console.log(this.state.context);
         },
         
         doCancel: function (e) {
@@ -28,10 +50,12 @@ var Component = createAdapter({
     
         render: function() {
         
-            var context = this.props.context;   
+            var context = this.state.context;   
             var formSchema = context._implements[0].schema;
             
             var FormWidget = global.adapterRegistry.getAdapter(context, IAutoFormWidget).ReactComponent;
+            
+            var ActionButton = global.utilityRegistry.getUtility(IActionButtonWidget).ReactComponent;
             
             return (
                 <div className="IEditObject">
@@ -40,10 +64,27 @@ var Component = createAdapter({
                     <FormWidget 
                         context={context} 
                         formSchema={formSchema}
-                        
-                        doSubmit={this.doSubmit} 
-                        doCancel={this.doCancel} />
+                        onChange={this.didUpdate} />
                     
+                    
+                    <FormActionBar>
+                            <ActionButton
+                                text="Spara"
+                                onClick={this.doSubmit}
+                                type="primary"
+                                disabled={false}
+                                showSpinner={false} />
+                            
+                            eller
+                        
+                            <ActionButton
+                                text="Ångra"
+                                onClick={this.doCancel}
+                                type="secondary"
+                                disabled={true}
+                                showSpinner={false} />
+                    </FormActionBar>
+                        
                 </div>
             );
         }
