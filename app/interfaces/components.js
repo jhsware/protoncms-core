@@ -52,7 +52,7 @@ module.exports.IUser = createInterface({
                     {name: "writer", title: "Skribent"}
                 ]
             }),
-            description: validators.textField({
+            description: validators.textAreaField({
                 label: 'Description',
                 palceholder: 'Enter description here...',
                 help: 'This describes this user, maybe a fun pun.',
