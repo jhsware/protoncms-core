@@ -11,7 +11,7 @@ var ProtonObjectPersist = createAdapter({
     implements: IProtonObjectPersist,
     adapts: IProtonObject,
     
-    persist: function () {
+    persist: function (callback) {
         console.log('Persisting object:');
         console.log(this.context);
         // Pass to backend
@@ -24,15 +24,17 @@ var ProtonObjectPersist = createAdapter({
             },
             input: this.context,
             inputType: "json",
-            converters: {'json text': JSON.stringify},
+            outputType: "json",
+            converters: {
+                'json text': JSON.stringify,
+                'text json': JSON.parse
+            },
             timeout: 5000
-        }, function (err) {
+        }, function (err, body, statusCode, headers) {
             if (err) {
                 console.error('Server Error:');
-                return console.log(err);
             }; 
-            
-            console.log('Update done!');
+            return callback(statusCode, body);
         });
         
     }
