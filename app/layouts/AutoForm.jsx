@@ -58,7 +58,7 @@ var Component = createAdapter({
                             options={theSchemaField.options}
                             fieldErrors={this.state.fieldErrors}
                             invariantErrors={this.state.invariantErrors}
-                            serverErrors={undefined}
+                            serverErrors={this.props.server_errors}
                             
                             type="text"
                             value={context[fieldKey]}
