@@ -27,14 +27,14 @@ var FormActionBar = React.createClass({
     },
     
     componentDidMount: function () {
-        $(window).on('scroll', this.onScroll.bind(this));
-        $(window).on('resize', this.onScroll.bind(this));
+        $(window).on('scroll', this.onScroll);
+        $(window).on('resize', this.onScroll);
         this.onScroll();
     },
     
     componentWillUnmount: function () {
-        $(window).off('scroll', this.onScroll.bind(this));
-        $(window).off('resize', this.onScroll.bind(this));
+        $(window).off('scroll', this.onScroll);
+        $(window).off('resize', this.onScroll);
     },
     
     render: function() {
