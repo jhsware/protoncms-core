@@ -1,4 +1,10 @@
 'use strict';
+var statusCodes = {
+    RequestOk: 200,
+    ValidationError: 400
+}
+
+
 var POST = function (req, res) {
     /*
         Submit Donation
@@ -29,14 +35,19 @@ var POST = function (req, res) {
     if (schemaErrors) { 
         console.log('### Data Error! ###');
         console.log(schemaErrors);
-        return res.status(400).json(schemaErrors);
+        schemaErrors.fieldErrors.birth_year = { type: 'required', message: 'REQUIRED!' };
+        return res.status(statusCodes.ValidationError).json({
+            server_errors: schemaErrors
+        });
     };
     
     // End data validation
     console.log('*** POST RECEIVED *** ');
     console.log(objectType);
-    console.log(obj);
-    return console.log(theData);
+    return res.status(statusCodes.RequestOk).json({
+        objectType: objectType,
+        data: obj
+    });
 };
 
 module.exports.POST = POST;
