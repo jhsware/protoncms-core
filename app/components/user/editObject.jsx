@@ -40,11 +40,24 @@ var Component = createAdapter({
             this.setState(state);
         },
         
+        submitCallback: function (statusCode, body) {
+            var state = this.state;
+            if (statusCode == 400) {
+                state.server_errors = body.server_errors;
+            } else if (statusCode == 200) {
+                var ObjectPrototype = require('../' + body.objectType);
+                var obj = new ObjectPrototype(body.data);
+                state.server_errors = undefined;
+                state.context = obj;
+            }
+            this.setState(state);
+        },
+        
         doSubmit: function () {
             console.log("User submitted:");
             console.log(this.state.context);
             
-            global.adapterRegistry.getAdapter(this.state.context, IProtonObjectPersist).persist();
+            global.adapterRegistry.getAdapter(this.state.context, IProtonObjectPersist).persist(this.submitCallback);
         },
         
         doCancel: function (e) {
@@ -67,8 +80,8 @@ var Component = createAdapter({
                     <FormWidget 
                         context={context} 
                         formSchema={formSchema}
+                        server_errors={this.state.server_errors}
                         onChange={this.didUpdate} />
-                    
                     
                     <FormActionBar>
                             <ActionButton
