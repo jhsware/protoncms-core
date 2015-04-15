@@ -2,10 +2,18 @@
 
 ### TODO ###
 
-TODO: proper data fetching from API with object type handling (can I use flux here, check it out)
-TODO: REST-API with persistence
+STARTED: proper data fetching from API with object type handling
+    TODO: Pass back server errors
+    TODO: Add search endpoint
+    TODO: Make sure errors are displayed in form
+    TODO: Check why form validation stopped working for birth_year
+STARTED: REST-API with persistence
+    TODO: Should the API be more explicit?
+    TODO: Should objects be mounted on workflow? (maybe not, it is strange for frontent)
+    TODO: Persist to mongodb
 TODO: User and session handling
 TODO: More input widgets
+TODO: Flux style for data flow in app?
 
 ### Interfaces ###
 
