@@ -25,7 +25,7 @@ var Component = createAdapter({
             var theFormEls = [];
             var schemaFields = context._implements[0].schema._fields;
             for (var fieldKey in schemaFields) {
-                var InputWidget = global.adapterRegistry.getAdapter(schemaFields['title'], IInputFieldWidget).ReactComponent;
+                var InputWidget = global.adapterRegistry.getAdapter(schemaFields[fieldKey], IInputFieldWidget).ReactComponent;
                 theFormEls.push(
                     <div className="IEditObject-formRow">
                         <InputWidget

@@ -80,3 +80,11 @@ module.exports.IProtonObjectPersist = createInterface({
     }
 });
 
+module.exports.IDummyData = createInterface({
+    // store object in backend by using REST API
+    name: 'IDummyData',
+    members: {
+        populate: "function"
+    }
+});
+

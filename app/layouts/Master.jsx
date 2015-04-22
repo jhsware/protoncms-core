@@ -15,7 +15,7 @@ var Master = React.createClass({
                     <meta charSet="utf-8" />
                     <meta httpEquiv="X-UA-Compatible" content="IE=edge" />
 
-                    <title>{data.title}</title>
+                    <title>ProtonCMS</title>
                     <meta name="description" content={data.description || ''} />
                     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
             

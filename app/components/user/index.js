@@ -7,11 +7,12 @@ var IUser = require('../../interfaces').IUser;
 var User = createObjectPrototype({
     implements: [IUser],
     extends: [ProtonObject],
-
-    _type: 'User',
     
-    title: 'I am a user!',
-    role: 'editor'
+    constructor: function () {
+        this._type = 'User';
+        this.title = 'New User object!';
+        this.role = 'editor';
+    }
 })
 
 module.exports = User;

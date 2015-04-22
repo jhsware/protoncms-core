@@ -24,7 +24,7 @@ var Page = React.createClass({
         
         return (
             <div>
-                <h1>{data.title}</h1>
+                <h1>{'Content of ' + workflowId}</h1>
                 <div className="contentList">
                     {contentEls}
                 </div>

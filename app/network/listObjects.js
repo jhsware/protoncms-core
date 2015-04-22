@@ -1,10 +1,12 @@
 'use strict';
 var createUtility = require('component-registry').createUtility;
 
-var IDataFetcher = require('../interfaces').IDataFetcher;
+var httpinvoke = require('httpinvoke');
 
-var User = require('../components/User');
-var ProtonObject = require('../components/ProtonObject');
+var IDataFetcher = require('../interfaces').IDataFetcher;
+var IDatabaseService = require('../interfaces').IDatabaseService;
+
+var components = require('../components');
 
 var FetchDataUtility = createUtility({
     implements: IDataFetcher,
@@ -12,35 +14,40 @@ var FetchDataUtility = createUtility({
     
     fetchData: function (params, callback) {
         
-        var content = []
-        for (var i = 0, imax = 200; i < imax; i++) {
-            if (i % 4 == 0) {
-                var tmp = new User({
-                    title: "I am User Nr " + i + "!",
-                    _type: 'User',
-                    _id: "obj_" + i,
-                    _workflowId: ''
-                });
-            } else {
-                var tmp = new ProtonObject({
-                    title: "I am a Simple Proton Object (" + i + ")",
-                    _type: 'ProtonObject',
-                    _id: "obj_" + i,
-                    _workflowId: ''
-                });
-            }
-            content.push(tmp);
-        }
+        var objectType = params.objectType || 'User';
         
-        var outp = {
-            status: 200,
-            body: {
-                title: "This is the start page",
-                description: 'No description',
-                content: content
-            }
-        };
-        callback(undefined, outp);
+        if (typeof Window === 'undefined') {
+            var host = 'http://127.0.0.1:5000';
+        } else {
+            var host = '';
+        }
+        var apiPath = host + "/api/" + objectType;
+        
+        httpinvoke(apiPath, "GET", {
+            outputType: "json",
+            converters: {'text json': JSON.parse},
+            timeout: 5000
+        }, function (err, body, statusCode, headers) {
+            if (err) {
+                console.error('Server Error:');
+                return console.log(err);
+            }; 
+            
+            var ObjectPrototype = components[objectType];
+            
+            var objList = body.data.map(function (item) {
+                return new ObjectPrototype(item);
+            })
+            
+            var outp = {
+                status: 200,
+                body: {
+                    content: objList
+                }
+            };
+            callback(undefined, outp);
+        });
+        
     }
 });
 global.utilityRegistry.registerUtility(FetchDataUtility);

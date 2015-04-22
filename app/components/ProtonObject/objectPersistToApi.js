@@ -12,7 +12,7 @@ var ProtonObjectPersist = createAdapter({
     adapts: IProtonObject,
     
     persist: function (callback) {
-        console.log('Persisting object:');
+        console.log('Persisting object to API:');
         console.log(this.context);
         // Pass to backend
         

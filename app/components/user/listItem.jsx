@@ -19,7 +19,7 @@ var RenderListItem = createAdapter({
             var context = this.props.context;
                  
             return (
-                <Link className="IListItemView" to="editObject" params={{workflowId: context._workflowId, objectId: context._id}}>
+                <Link className="IListItemView" to="editObject" params={{workflowId: context._type, objectId: context._id}}>
                     <h2>{context.title}</h2>
                     <h3>My role is: {context.role}</h3>
                 </Link>

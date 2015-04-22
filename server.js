@@ -9,6 +9,7 @@ var express = require('express');
 var nodejsx = require('node-jsx').install({
     extension: '.jsx'
 });
+var favicon = require('serve-favicon');
 
 var API = require('./api/app');
 
@@ -16,16 +17,18 @@ var renderApp = require('./app/app').renderApp;
 
 var app = express();
 
+// Serve assets locally
+app.use('/assets', express.static(path.join(__dirname, 'assets')))
+
 var favIcon = function (req, res) {
     // TODO: Change so this returns the actual favicon.ico
     res.send("favicon stub");
 }
-
-// Serve assets locally
-app.use('/assets', express.static(path.join(__dirname, 'assets')))
-
 // handle favicon
 app.get('/favicon.ico', favIcon)
+
+// uncomment after placing your favicon in /assets
+//app.use(favicon(__dirname + '/assets/favicon.ico'));
 
 // API endpoints
 app.use('/api', API);

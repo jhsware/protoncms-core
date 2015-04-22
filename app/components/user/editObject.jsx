@@ -15,6 +15,8 @@ var IAutoFormWidget = require('../../interfaces').IAutoFormWidget;
 
 var FormActionBar = require('../../layouts/FormActionBar');
 
+var components = require('../../components');
+
 var Component = createAdapter({
     implements: IEditObject,
     adapts: IUser,
@@ -45,7 +47,7 @@ var Component = createAdapter({
             if (statusCode == 400) {
                 state.server_errors = body.server_errors;
             } else if (statusCode == 200) {
-                var ObjectPrototype = require('../' + body.objectType);
+                var ObjectPrototype = components[body.objectType];
                 var obj = new ObjectPrototype(body.data);
                 state.server_errors = undefined;
                 state.context = obj;

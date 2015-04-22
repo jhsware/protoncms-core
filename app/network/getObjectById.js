@@ -4,12 +4,11 @@ var httpinvoke = require('httpinvoke');
 
 var IDataFetcher = require('../interfaces').IDataFetcher;
 
-var ProtonObject = require('../components/ProtonObject');
-var User = require('../components/User');
+var components = require('../components');
 
 var FetchDataUtility = createUtility({
     implements: IDataFetcher,
-    name: 'getObjectById',
+    name: 'fetchObjectById',
     
     fetchData: function (params, callback) {
         
@@ -35,16 +34,21 @@ var FetchDataUtility = createUtility({
         }, function (err, body, statusCode, headers) {
             if (err) {
                 console.error('Server Error:');
-                return console.log(err);
-            }; 
+                return callback(err);
+            };
             
-            var ObjectPrototype = require('../components/' + objectType);
+            var ObjectPrototype = components[body.data.objectType];
             
-            var obj = new ObjectPrototype(body);
+            var obj = new ObjectPrototype(body.data.data);
+            
+            console.log("This object was returned by API");
+            console.log(obj);
             
             var outp = {
                 status: 200,
-                body: obj
+                body: {
+                    content: obj
+                }
             };
             callback(undefined, outp);
         });

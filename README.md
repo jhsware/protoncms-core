@@ -1,6 +1,23 @@
+# Note on setup running Mac OS X
+
+You will need to update the open file limits in your terminal window, otherwise node has issues:
+
+    Change global file limit:
+    $ sudo launchctl limit maxfiles 1000000 1000000
+
+    Change file limit in terminal session:
+    $ ulimit -n 100000
+
+Note: You have to do this each time these settings have been lost, for example if your computer
+has been in hibernation or similar. If you get random errors when doing npm install/update/start
+just run these two commands and it usually fixes things. 
+
 ## Developer Notes ###
 
 ### TODO ###
+
+TODO: Favicon
+    "serve-favicon": "~2.1.3",
 
 STARTED: proper data fetching from API with object type handling
     TODO: Pass back server errors
@@ -14,6 +31,10 @@ STARTED: REST-API with persistence
 TODO: User and session handling
 TODO: More input widgets
 TODO: Flux style for data flow in app?
+
+### Issue With Kerberos for Mongodb-driver ###
+
+Seems that nodemon and Gulp are conflicting with the mongodb-driver so trying different watcher.
 
 ### Interfaces ###
 
@@ -68,6 +89,12 @@ IContentMenuItem: utility
 
 IUserWidget: adapts IUserSession
     ReactComponent
+
+IPersistenceService:
+    create
+    update
+    fetch
+    delete
 
 
 ### Components ###

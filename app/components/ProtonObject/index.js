@@ -5,13 +5,12 @@ var IProtonObject = require('../../interfaces').IProtonObject;
 
 var ProtonObject = createObjectPrototype({
     implements: [IProtonObject],
-    _id: undefined,
-    _type: 'ProtonObject',
-    _workflowId: undefined,
-    _createdAt: undefined,
-    _modifiedAt: undefined,
     
-    title: undefined
+    constructor: function () {    
+        this._type = 'ProtonObject';
+        this._workflowId = undefined;
+        this.title = 'New object...';
+    }
 });
 
 module.exports = ProtonObject;
@@ -19,4 +18,10 @@ module.exports = ProtonObject;
 // Import views
 require('./listItem');
 require('./editObject');
-require('./objectPersist');
+require('./dummyData');
+
+if (typeof window !== 'undefined') {
+    require('./objectPersistToApi');    
+} else {
+    require('./objectPersistToMongoDB');
+}

@@ -18,17 +18,17 @@ if (!global.adapterRegistry) {
     console.log('[App] Creating component adapter registry');
     var AdapterRegistry = require('component-registry').AdapterRegistry;
     global.adapterRegistry = new AdapterRegistry();
-    
-    // Register all our input field widgets
-    // Change this to override
-    require('schema-react-formlib').registerAllWidgets({
-        adapterRegistry: global.adapterRegistry,
-        utilityRegistry: global.utilityRegistry
-    });
 }
 /*
     /END COMPONENT REGISTRY/
 */
+
+// Register all our input field widgets
+// Change this to override
+require('schema-react-formlib').registerAllWidgets({
+    adapterRegistry: global.adapterRegistry,
+    utilityRegistry: global.utilityRegistry
+});
 
 // Register dataFetchers
 require('./network');
