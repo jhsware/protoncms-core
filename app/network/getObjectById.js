@@ -29,9 +29,9 @@ var FetchDataUtility = createUtility({
                 return callback(err);
             };
             
-            var ObjectPrototype = components[body.data.objectType];
+            var ObjectPrototype = components[body.objectType];
             
-            var obj = new ObjectPrototype(body.data.data);
+            var obj = new ObjectPrototype(body.data);
             
             console.log("This object was returned by API");
             console.log(obj);

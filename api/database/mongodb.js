@@ -67,8 +67,6 @@ var MongoDbDatabaseService = createUtility({
         });
         promise.success(function (doc) {
             callback(undefined, doc);
-            console.log("doc:");
-            console.log(doc);
         });
         promise.complete(function (err, doc) {
             db.close();
@@ -108,11 +106,7 @@ var MongoDbDatabaseService = createUtility({
                 return callback(err);
             };
             
-            callback(undefined, {
-                status: 'ok',
-                objectType: doc._type,
-                data: doc
-            });
+            callback(undefined, doc);
         });    
 
     },
@@ -120,25 +114,23 @@ var MongoDbDatabaseService = createUtility({
     query: function (collectionName, query, callback) {
         var db = this._getDb();
         
+        console.log("Query [" + collectionName + "]:");
+        console.log(query);
+        
         var collection = db.get(collectionName);
-        collection.find(query, function (err, docs) {
-            db.close();
-            
-            if (err) {
-                callback({
-                    status: 'error',
-                    err: err
-                });
-            } else {
-                console.log("Result from query:");
-                console.log(docs);
+        var promise = collection.find(query)
+        promise.error(function (err) {
+            callback(err);
+        });
+        
+        promise.success(function (docs) {
+            console.log("Result from query:");
+            console.log(docs);
 
-                callback({
-                    status: 'ok',
-                    objectType: collectionName,
-                    data: docs
-                });                
-            };
+            callback(undefined, docs);
+        });
+        promise.complete(function (err, docs) {
+            db.close();
         });
     },
         

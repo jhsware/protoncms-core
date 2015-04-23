@@ -11,3 +11,9 @@ module.exports.IDataFetcher = createInterface({
     name: 'IDataFetcher'
     
 });
+
+module.exports.IApiCall = createInterface({
+    // Utility to fetch data from server
+    name: 'IApiCall'
+    
+});

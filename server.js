@@ -3,13 +3,34 @@ var dotenv = require('dotenv').load();
 
 var development = process.env.NODE_ENV !== 'production';
 
-var cookieParser = require('cookie-parser');
-var path = require('path');
-var url = require('url');
-var express = require('express');
 var nodejsx = require('node-jsx').install({
     extension: '.jsx'
 });
+
+/*
+    Create the global component registry
+*/    
+if (!global.utilityRegistry) {
+    console.log('[App] Creating component utility registry');
+    var UtilityRegistry = require('component-registry').UtilityRegistry;
+    global.utilityRegistry = new UtilityRegistry();
+}
+if (!global.adapterRegistry) {
+    console.log('[App] Creating component adapter registry');
+    var AdapterRegistry = require('component-registry').AdapterRegistry;
+    global.adapterRegistry = new AdapterRegistry();
+}
+/*
+    /END COMPONENT REGISTRY/
+*/
+
+var cookieParser = require('cookie-parser');
+var passport = require('./api/authentication');
+
+var path = require('path');
+var url = require('url');
+var express = require('express');
+
 var favicon = require('serve-favicon');
 
 var config = require('./config');
@@ -35,6 +56,10 @@ app.get('/favicon.ico', favIcon)
 // Session handling
 app.use(cookieParser(config.cookieSecret))
 app.use(sessionHandling(config.mongoDbHost + '/' + config.mongoDbName, config.cookieSecret))
+
+// Authentication
+app.use(passport.initialize());
+app.use(passport.session());
 
 // uncomment after placing your favicon in /assets
 //app.use(favicon(__dirname + '/assets/favicon.ico'));

@@ -40,6 +40,12 @@ module.exports.IUser = createInterface({
                 help: 'This is the title of your object, used in lists etc.',
                 required: true
             }),
+            email: validators.emailField({
+                label: 'E-mail',
+                palceholder: 'Type here...',
+                help: 'This is your e-mail, used for login and recovering passwords',
+                required: true
+            }),
             role: validators.selectField({
                 label: 'Role',
                 palceholder: 'Enter role here...',

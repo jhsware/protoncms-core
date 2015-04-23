@@ -22,6 +22,7 @@ var QUERY = function (req, res) {
     */
     // Get the passed data
     var objectType = req.params.objectType;
+    var query = req.params.query;
 
     // End data validation
     console.log('*** QUERY RECEIVED *** ');
@@ -30,18 +31,18 @@ var QUERY = function (req, res) {
     
     console.log("Let's get these objects...");
     var dbUtil = global.utilityRegistry.getUtility(IDatabaseService, 'mongodb');
-    dbUtil.query(objectType, {}, function (body) {
-        if (body.status == 'ok') {
-            res.status(statusCodes.RequestOk).json({
-                status: 'ok',
-                data: body.data
-            });
-        } else {
-            res.status(statusCodes.DatabaseError).json({
+    dbUtil.query(objectType, query, function (err, docs) {
+        if (err) {
+            return res.status(statusCodes.DatabaseError).json({
                 status: 'error',
                 message: 'Database Error: Could not fetch objects!'
             });
         }
+
+        return res.status(statusCodes.RequestOk).json({
+            status: 'ok',
+            data: docs
+        });
     });
 };
 

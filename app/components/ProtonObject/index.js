@@ -16,8 +16,8 @@ var ProtonObject = createObjectPrototype({
 module.exports = ProtonObject;
 
 // Import views
-require('./listItem');
 require('./editObject');
+require('./listItem');
 require('./dummyData');
 
 if (typeof window !== 'undefined') {

@@ -30,7 +30,7 @@ var Master = React.createClass({
                     <ul className="mainMenu">
                         <li className="mainMenu-toggleContentMenu">CM</li>
                         <li className="mainMenu-title">ProtonCMS</li>
-                        <li className="mainMenu-userWidget">Log in</li>
+                        <li className="mainMenu-userWidget"><Link className="mainMenu-itemLink" to="/users/login">Login</Link></li>
                     </ul>
                     <ul className="contentMenu">
                         <li className="contentMenu-item"><Link className="contentMenu-itemLink" to="/users">Users</Link></li>
