@@ -16,13 +16,13 @@ var Page = React.createClass({
         var obj = this.props.data.content;
         var ReactComponent = global.adapterRegistry.getAdapter(obj, IEditObject).ReactComponent;
         
-        var workflowId = this.props.params.workflowId; 
+        var parentId = this.props.params.parentId; 
         
         return (
             <div>
                 <h1>{obj.title}</h1>
                 <div className="contentList">
-                    <ReactComponent key='obj' context={obj} workflowId={workflowId} />
+                    <ReactComponent key='obj' context={obj} parentId={parentId} />
                 </div>
             </div>
         );

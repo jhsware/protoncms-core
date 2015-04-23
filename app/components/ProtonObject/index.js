@@ -8,7 +8,7 @@ var ProtonObject = createObjectPrototype({
     
     constructor: function () {    
         this._type = 'ProtonObject';
-        this._workflowId = undefined;
+        this._parentId = undefined;
         this.title = 'New object...';
     }
 });

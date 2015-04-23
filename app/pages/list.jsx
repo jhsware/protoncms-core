@@ -16,21 +16,21 @@ var Page = React.createClass({
     
     render: function() {
         
-        var workflowId = this.props.params.workflowId || 'default';
+        var parentId = this.props.params.parentId || 'default';
         var data = this.props.data;
         
         var contentEls = data.content.map(function (obj, i) {
             var ReactComponent = global.adapterRegistry.getAdapter(obj, IListItemView).ReactComponent;
-            obj._workflowId = workflowId;
+            obj._parentId = parentId;
             return <ReactComponent key={'item-' + i} context={obj} />;            
         });
         
         return (
             <div>
-                <Link className="" to="createObject" params={{workflowId: 'users', objectType: 'User'}}>
+                <Link className="" to="createObject" params={{parentId: 'users', objectType: 'User'}}>
                     Create user...
                 </Link>
-                <h1>{'Content of ' + workflowId}</h1>
+                <h1>{'Content of ' + parentId}</h1>
                 <div className="contentList">
                     {contentEls}
                 </div>

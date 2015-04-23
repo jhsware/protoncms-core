@@ -17,7 +17,7 @@ var FetchDataUtility = createUtility({
         } else {
             var host = '';
         }
-        var apiPath = host + "/api/" + params.workflowId + '/' + params.objectId;
+        var apiPath = host + "/api/" + params.parentId + '/' + params.objectId;
         
         httpinvoke(apiPath, "GET", {
             outputType: "json",

@@ -22,7 +22,7 @@ module.exports.IProtonObject = createInterface({
     }),
     members: {
         _id: "ro string",
-        _workflowId: "ro string",
+        _parentId: "ro string",
         _createdAt: "ro datetime",
         _modifiedAt: "ro datetime",
         _objectType: "ro string"

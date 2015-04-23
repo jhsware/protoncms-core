@@ -55,7 +55,7 @@ var Component = createAdapter({
                 var data = body.data;
                 if (this.state.context._id !== data._id) {
                     // Redirect to new object
-                    this.context.router.transitionTo('editObject', {workflowId: data._type, objectId: data._id});
+                    this.context.router.transitionTo('editObject', {parentId: data._type, objectId: data._id});
                 } else {
                     var ObjectPrototype = components[body.objectType];
                     var obj = new ObjectPrototype(data);
