@@ -25,7 +25,7 @@ module.exports = function Sessions(url, secret) {
         secret: secret,
         store: store,
         resave: true,
-        saveUninitialized: true
+        saveUninitialized: false
     });
 
     store.once('connected', function() {
@@ -54,5 +54,5 @@ module.exports = function Sessions(url, secret) {
     });
     */
 
-    return session;
+    return theSession;
 };
