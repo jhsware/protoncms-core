@@ -28,10 +28,15 @@ if (!global.adapterRegistry) {
 require('./database');
 
 
-router.get('/:objectType', require('./endpoint').QUERY);
-
+// CREATE
+router.post('/:objectType', require('./endpoint').POST);
+// UPDATE
 router.post('/:objectType/:id', jsonParser, require('./endpoint').POST);
+// QUERY
+router.get('/:objectType', require('./endpoint').QUERY);
+// READ
 router.get('/:objectType/:id', require('./endpoint').GET);
-
+// TODO: DELETE
+//router.delete('/:objectType/:id', require('./endpoint').DELETE);
 
 module.exports = router;

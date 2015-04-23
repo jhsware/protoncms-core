@@ -1,6 +1,9 @@
 'use strict';
 var React = require('react');
 
+var ReactRouter = require('react-router');
+var Link        = ReactRouter.Link;
+
 var IDataFetcher = require('../interfaces').IDataFetcher;
 var IListItemView = require('../interfaces').IListItemView;
 
@@ -24,6 +27,9 @@ var Page = React.createClass({
         
         return (
             <div>
+                <Link className="" to="createObject" params={{workflowId: 'users', objectType: 'User'}}>
+                    Create user...
+                </Link>
                 <h1>{'Content of ' + workflowId}</h1>
                 <div className="contentList">
                     {contentEls}

@@ -9,74 +9,10 @@ var IDatabaseService = require('../app/interfaces').IDatabaseService;
 var IProtonObjectPersist = require('../app/interfaces').IProtonObjectPersist;
 var components = require('../app/components');
 
-/*
-    TODO: Add on create:
-
-        this._type = string; // Object type needs to be stored in DB so we can search
-        this._objectId = ObjectId(); // Mongodb object id
-        this._createdAt = new Date();
-        this._modifiedAt = new Date();
-        this._collection = 
-
-    TODO: Update on modify:
-
-        this._modifiedAt = new Date();
-
-    TODO: 
-
-
-
-*/
-
-
-var QUERY = function (req, res) {
-    /*
-        Submit Donation
-
-        Send POST to /api/fundraising/donation
-
-        https://github.com/Cancerfonden/middleware-api/wiki/Notes-for-frontenders
-
-        curl --include \
-             --request POST \
-             --header "Content-Type: application/json" \
-             --data-binary '{"donation_sum":"100","frequency":"once","payment_type":"card"}' \
-             http://localhost:3000/api/fundraising/donation
-    
-    */
-    // Get the passed data
-    var objectType = req.params.objectType;
-
-    // End data validation
-    console.log('*** QUERY RECEIVED *** ');
-    console.log(objectType);
-    
-    
-    console.log("Let's get these objects...");
-    var dbUtil = global.utilityRegistry.getUtility(IDatabaseService, 'mongodb');
-    dbUtil.query(objectType, {}, function (body) {
-        if (body.status == 'ok') {
-            res.status(statusCodes.RequestOk).json({
-                status: 'ok',
-                data: body.data
-            });
-        } else {
-            res.status(statusCodes.DatabaseError).json({
-                status: 'error',
-                message: 'Database Error: Could not fetch objects!'
-            });
-        }
-    });
-};
-
-module.exports.QUERY = QUERY;
-
-var _validate = function (obj) {
-    
-}
-
 var POST = function (req, res) {
     /*
+        CREATE AND UPDATE...
+    
         Submit Donation
 
         Send POST to /api/fundraising/donation
@@ -92,7 +28,7 @@ var POST = function (req, res) {
     */
     // Get the passed data
     var theData = req.body;
-    var objectType = req.params.objectType;
+    var objectType = theData._type;
     var objectId = req.params.id;
     
     var ObjectPrototype = components[objectType];
@@ -114,13 +50,17 @@ var POST = function (req, res) {
     // Submitted object passed validation so let's persist it to the backen
     console.log("Let's persist this guy...");
     var pa = global.adapterRegistry.getAdapter(obj, IProtonObjectPersist);
-    pa.persist(function () {
-        console.log('Persist callback called!');
-    });
-    
-    return res.status(statusCodes.RequestOk).json({
-        objectType: objectType,
-        data: obj
+    pa.persist(function (err, data) {
+        if (err) {
+            return res.status(statusCodes.DatabaseError).json({
+                err: err
+            });
+        }
+        
+        return res.status(statusCodes.RequestOk).json({
+            objectType: data._type,
+            data: data
+        });
     });
 };
 
@@ -168,3 +108,45 @@ var GET = function (req, res) {
 };
 
 module.exports.GET = GET;
+
+var QUERY = function (req, res) {
+    /*
+        Submit Donation
+
+        Send POST to /api/fundraising/donation
+
+        https://github.com/Cancerfonden/middleware-api/wiki/Notes-for-frontenders
+
+        curl --include \
+             --request POST \
+             --header "Content-Type: application/json" \
+             --data-binary '{"donation_sum":"100","frequency":"once","payment_type":"card"}' \
+             http://localhost:3000/api/fundraising/donation
+    
+    */
+    // Get the passed data
+    var objectType = req.params.objectType;
+
+    // End data validation
+    console.log('*** QUERY RECEIVED *** ');
+    console.log(objectType);
+    
+    
+    console.log("Let's get these objects...");
+    var dbUtil = global.utilityRegistry.getUtility(IDatabaseService, 'mongodb');
+    dbUtil.query(objectType, {}, function (body) {
+        if (body.status == 'ok') {
+            res.status(statusCodes.RequestOk).json({
+                status: 'ok',
+                data: body.data
+            });
+        } else {
+            res.status(statusCodes.DatabaseError).json({
+                status: 'error',
+                message: 'Database Error: Could not fetch objects!'
+            });
+        }
+    });
+};
+
+module.exports.QUERY = QUERY;

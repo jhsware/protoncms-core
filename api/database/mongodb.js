@@ -59,9 +59,17 @@ var MongoDbDatabaseService = createUtility({
         
             
         var collection = db.get(collectionName);
-        collection.insert(data, function () {
+        var promise = collection.insert(data);
+        promise.error(function (err) {
+            callback(err);
+        });
+        promise.success(function (doc) {
+            callback(undefined, doc);
+            console.log("doc:");
+            console.log(doc);
+        });
+        promise.complete(function (err, doc) {
             db.close();
-            callback('ok');
         });
     },
     

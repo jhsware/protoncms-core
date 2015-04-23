@@ -23,6 +23,9 @@ var Component = createAdapter({
     
     ReactComponent: React.createClass({
         
+        contextTypes: {
+            router: React.PropTypes.func
+        },
 
         didUpdate: function (data) {
             var state = this.state;
@@ -42,15 +45,23 @@ var Component = createAdapter({
             this.setState(state);
         },
         
-        submitCallback: function (statusCode, body) {
+        submitCallback: function (err, body, statusCode) {
             var state = this.state;
             if (statusCode == 400) {
                 state.server_errors = body.server_errors;
             } else if (statusCode == 200) {
-                var ObjectPrototype = components[body.objectType];
-                var obj = new ObjectPrototype(body.data);
-                state.server_errors = undefined;
-                state.context = obj;
+                // Request was a success, now check if we created a new object, in
+                // which case redirect to that object
+                var data = body.data;
+                if (this.state.context._id !== data._id) {
+                    // Redirect to new object
+                    this.context.router.transitionTo('editObject', {workflowId: data._type, objectId: data._id});
+                } else {
+                    var ObjectPrototype = components[body.objectType];
+                    var obj = new ObjectPrototype(data);
+                    state.server_errors = undefined;
+                    state.context = obj;                    
+                }
             }
             this.setState(state);
         },

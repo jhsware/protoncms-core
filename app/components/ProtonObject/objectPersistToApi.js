@@ -31,10 +31,10 @@ var ProtonObjectPersist = createAdapter({
             },
             timeout: 5000
         }, function (err, body, statusCode, headers) {
-            if (err) {
-                console.error('Server Error:');
+            if (err || statusCode != 200) {
+                return callback(err, body);
             }; 
-            return callback(statusCode, body);
+            return callback(undefined, body, statusCode);
         });
         
     }

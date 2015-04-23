@@ -12,20 +12,12 @@ var FetchDataUtility = createUtility({
     
     fetchData: function (params, callback) {
         
-        var idVal = parseInt(params.objectId.replace("obj_",""));
-        
-        if (idVal % 2 == 0) {
-            var objectType = 'ProtonObject';            
-        } else {
-            var objectType = 'User';
-        }
-        
         if (typeof Window === 'undefined') {
             var host = 'http://127.0.0.1:5000';
         } else {
             var host = '';
         }
-        var apiPath = host + "/api/" + objectType + '/' + params.objectId;
+        var apiPath = host + "/api/" + params.workflowId + '/' + params.objectId;
         
         httpinvoke(apiPath, "GET", {
             outputType: "json",

@@ -13,6 +13,7 @@ module.exports = (
     
         <Route path="/:workflowId" handler={require('./pages/list')} />
         <Route name="editObject" path="/:workflowId/:objectId/edit" handler={require('./pages/edit')} />
+        <Route name="createObject" path="/:workflowId/:objectType/create" handler={require('./pages/create')} />
 
         <NotFoundRoute handler={require('./pages/not_found')} />
     </Route>
