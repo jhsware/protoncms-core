@@ -3,6 +3,7 @@ var dotenv = require('dotenv').load();
 
 var development = process.env.NODE_ENV !== 'production';
 
+var cookieParser = require('cookie-parser');
 var path = require('path');
 var url = require('url');
 var express = require('express');
@@ -10,6 +11,10 @@ var nodejsx = require('node-jsx').install({
     extension: '.jsx'
 });
 var favicon = require('serve-favicon');
+
+var config = require('./config');
+
+var sessionHandling = require('./app/sessions');
 
 var API = require('./api/app');
 
@@ -26,6 +31,10 @@ var favIcon = function (req, res) {
 }
 // handle favicon
 app.get('/favicon.ico', favIcon)
+
+// Session handling
+app.use(cookieParser(config.cookieSecret))
+app.use(sessionHandling(config.mongoDbHost + '/' + config.mongoDbName, config.cookieSecret))
 
 // uncomment after placing your favicon in /assets
 //app.use(favicon(__dirname + '/assets/favicon.ico'));

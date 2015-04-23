@@ -29,13 +29,13 @@ require('./database');
 
 
 // CREATE
-router.post('/:objectType', require('./endpoint').POST);
+router.post('/:objectType', require('./endpoints/POST'));
 // UPDATE
-router.post('/:objectType/:id', jsonParser, require('./endpoint').POST);
+router.post('/:objectType/:id', jsonParser, require('./endpoints/POST'));
 // QUERY
-router.get('/:objectType', require('./endpoint').QUERY);
+router.get('/:objectType', require('./endpoints/QUERY'));
 // READ
-router.get('/:objectType/:id', require('./endpoint').GET);
+router.get('/:objectType/:id', require('./endpoints/GET'));
 // TODO: DELETE
 //router.delete('/:objectType/:id', require('./endpoint').DELETE);
 

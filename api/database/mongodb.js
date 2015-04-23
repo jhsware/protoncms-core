@@ -9,8 +9,8 @@ var ObjectID = mongodb.ObjectID;
 
 var IDatabaseService = require('../../app/interfaces').IDatabaseService;
 
-var dbName = 'protoncms';
-var monkDbUrl = '127.0.0.1:27017/' + dbName;
+var dbName = require('../../config').mongoDbName;
+var monkDbUrl = require('../../config').mongoDbHost + '/' + dbName;
 
 var MongoDbDatabaseService = createUtility({
     implements: IDatabaseService,
@@ -56,6 +56,8 @@ var MongoDbDatabaseService = createUtility({
         var db = this._getDb();
             
         data._createdAt = data._modifiedAt = Date.now();
+        data._parentId = collectionName;
+        data._parentPath = '/' + collectionName;
         
             
         var collection = db.get(collectionName);
