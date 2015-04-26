@@ -24,6 +24,10 @@ var GET = function (req, res) {
     var objectType = req.params.objectType;
     var objectId = req.params.id;
 
+    // DEBUGGING
+    console.log("This is the logged in user:");
+    console.log(req.user);
+
     // End data validation
     console.log('*** GET RECEIVED *** ');
     console.log(objectType);

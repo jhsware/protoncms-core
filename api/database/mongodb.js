@@ -55,10 +55,19 @@ var MongoDbDatabaseService = createUtility({
     insert: function (collectionName, data, callback) {
         var db = this._getDb();
             
+        // TODO: pass user so we get the real user
+        var user = {
+            _id: 'anonymous'
+        }
+        
         data._createdAt = data._modifiedAt = Date.now();
+        data._createdByUserId = data._modifiedByUserId = user._id;
+        
         data._parentId = collectionName;
         data._parentPath = '/' + collectionName;
         
+        // Add the creator as default owner
+        data._permissions.owners.push(user._id);
             
         var collection = db.get(collectionName);
         var promise = collection.insert(data);
@@ -124,8 +133,8 @@ var MongoDbDatabaseService = createUtility({
         });
         
         promise.success(function (docs) {
-            console.log("Result from query:");
-            console.log(docs);
+            console.log("Result from query: " + docs.length + " items");
+            // console.log(docs);
 
             callback(undefined, docs);
         });

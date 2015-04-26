@@ -25,7 +25,12 @@ module.exports.IProtonObject = createInterface({
         _parentId: "ro string",
         _createdAt: "ro datetime",
         _modifiedAt: "ro datetime",
-        _objectType: "ro string"
+        _objectType: "ro string",
+        // TODO: Add these:
+        _owners: "rw string",
+        _createdBy: "ro string",
+        _modifiedBy: "ro string",
+        
     }
 });
 

@@ -36,11 +36,14 @@ passport.use(new LocalStrategy(
   }
 ));
 
+// TODO: In production if we want maximum scalability, we should probably use an in-memory key store such as
+// Redis and then read the user from there, but it needs to be synced on updates
 passport.serializeUser(function(user, done) {
     done(null, user._id);
 });
 
 passport.deserializeUser(function(id, done) {
+    // TODO: Restrict fields fetched to only those relevant for access control
     var dbUtil = global.utilityRegistry.getUtility(IDatabaseService, 'mongodb');
     dbUtil.fetchById('User', id, function (err, user) {
         done(err, user);

@@ -2,11 +2,22 @@
 var createObjectPrototype = require('component-registry').createObjectPrototype;
 
 var IProtonObject = require('../../interfaces').IProtonObject;
+var Permissions = require('../../permissions').Permissions;
 
 var ProtonObject = createObjectPrototype({
     implements: [IProtonObject],
+    extends: [Permissions],
     
-    constructor: function () {    
+    constructor: function () {
+        this._IPermissions.constructor.call(this, {
+            // Override default permissions by calling this constructor in 
+            // specialized prototypes
+            owners: [],
+            mayView: ['owner', 'manager'],
+            mayEdit: ['owner', 'manager'],
+            mayDelete: ['owner', 'manager']
+        });
+        
         this._type = 'ProtonObject';
         this._parentId = undefined;
         this.title = 'New object...';

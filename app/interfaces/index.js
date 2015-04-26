@@ -11,3 +11,4 @@ exportAllFrom(require('./network'));
 exportAllFrom(require('./views'));
 exportAllFrom(require('./workflow'));
 exportAllFrom(require('./database'));
+exportAllFrom(require('./permissions'));
