@@ -5,7 +5,7 @@ var assert = require('assert');
 
 var mongodb = require('mongodb');
 var ObjectID = mongodb.ObjectID;
-
+var mquery = require('mquery');
 
 var IDatabaseService = require('../../app/interfaces').IDatabaseService;
 var IRootPrincipal = require('../../app/interfaces').IRootPrincipal;
@@ -156,21 +156,22 @@ var MongoDbDatabaseUtility = createUtility({
             }
         }
         
-        var promise = collection.find(query)
         
-        promise.error(function (err) {
-            callback(err);
-        });
-        
-        promise.success(function (docs) {
-            console.log("Result from query: " + docs.length + " items");
-            // console.log(docs);
-
-            callback(undefined, docs[0]);
-        });
-        promise.complete(function (err, docs) {
-            this._closeDb();
-        }.bind(this));
+        mquery(collection)
+            .where({ _id: objId })
+            .findOne()
+            .then(
+                function (doc) {
+                    callback(undefined, doc);
+                },
+                
+                function (error) {
+                    callback(err);
+                }
+            )
+            .then(function () {
+                this._closeDb();
+            }.bind(this));
     },
     
     query: function (principal, collectionName, query, callback) {
