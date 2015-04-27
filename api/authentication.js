@@ -42,11 +42,17 @@ passport.serializeUser(function(user, done) {
     done(null, user._id);
 });
 
+var rootPrincipal = require('../app/permissions').rootPrincipal;
+
 passport.deserializeUser(function(id, done) {
     // TODO: Restrict fields fetched to only those relevant for access control
     var dbUtil = global.utilityRegistry.getUtility(IDatabaseService, 'mongodb');
-    dbUtil.fetchById('User', id, function (err, user) {
-        done(err, user);
+    
+    dbUtil.fetchById(rootPrincipal, 'User', id, function (err, user) {
+        // TODO: Create a principal that can be used for permission checks
+        var principal = new Principal(user);
+        
+        done(err, principal);
     });
 });
 

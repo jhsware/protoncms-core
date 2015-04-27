@@ -19,6 +19,9 @@ just run these two commands and it usually fixes things.
 TODO: Favicon
     "serve-favicon": "~2.1.3",
 
+TODO: When creating an object, allow creation through interface to limit what properties are set something like:
+        new ObjectPrototype(IObjectInterface(data));
+        
 STARTED: proper data fetching from API with object type handling
     TODO: Pass back server errors
     TODO: Add search endpoint

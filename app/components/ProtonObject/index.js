@@ -19,7 +19,6 @@ var ProtonObject = createObjectPrototype({
         });
         
         this._type = 'ProtonObject';
-        this._parentId = undefined;
         this.title = 'New object...';
     }
 });
@@ -33,6 +32,4 @@ require('./dummyData');
 
 if (typeof window !== 'undefined') {
     require('./objectPersistToApi');    
-} else {
-    require('./objectPersistToMongoDB');
 }

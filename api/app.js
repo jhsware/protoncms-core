@@ -8,7 +8,7 @@ var router = express.Router();
 var jsonParser = bodyParser.json();
 
 // Register database services
-require('./database');
+require('./database/mongodb')(global);
 
 // LOGIN
 router.post('/login', jsonParser, require('./endpoints/login'));

@@ -18,6 +18,13 @@ module.exports.IPrincipal = createInterface({
     }
 });
 
+module.exports.IRootPrincipal = createInterface({
+    name: "IRootPrincipal",
+    members: {
+        _principalId: "string"
+    }
+});
+
 module.exports.IPermissions = createInterface({
     name: "IPermissions",
     /*
@@ -25,9 +32,12 @@ module.exports.IPermissions = createInterface({
     
     NOTE: Owners are referenced by princpalId, not objectId
     
-    'protoncms.manager' -- this role may to this regardless of workflow state
-    'draft:protoncms.manager' -- this role may to this regardless of workflow name as long as state is draft
-    'work.draft:protoncms.manager' -- this role may to this on workflow named "work" as long as state is draft
+    'owner' -- any matching principalId in the owner list
+    'manager' -- this role may to this regardless of workflow state
+    
+    IN THE FUTURE I WANT TO ADD SOMETHING LIKE THIS:
+    'draft:manager' -- this role may to this regardless of workflow name as long as state is draft
+    'work.draft:manager' -- this role may to this on workflow named "work" as long as state is draft
     'draft:owner' -- same as above but applies to user marked as owner, supports all three levels above
     
     */

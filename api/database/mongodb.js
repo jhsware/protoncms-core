@@ -8,11 +8,12 @@ var ObjectID = mongodb.ObjectID;
 
 
 var IDatabaseService = require('../../app/interfaces').IDatabaseService;
+var IRootPrincipal = require('../../app/interfaces').IRootPrincipal;
 
 var dbName = require('../../config').mongoDbName;
 var monkDbUrl = require('../../config').mongoDbHost + '/' + dbName;
 
-var MongoDbDatabaseService = createUtility({
+var MongoDbDatabaseUtility = createUtility({
     implements: IDatabaseService,
     name: 'mongodb',
     
@@ -45,29 +46,40 @@ var MongoDbDatabaseService = createUtility({
         }.bind(this), 1000);
     },
     
-    drop: function (collectionName, callback) {
-        var db = this._getDb();
-        var collection = db.get(collectionName);
-        collection.drop(callback);
-        db.close();
+    drop: function (principal, collectionName, callback) {
+        // TODO: Check if this is a root princpal
+        if (IRootPrincipal.providedBy(principal)) {
+            var db = this._getDb();
+            var collection = db.get(collectionName);
+            var promise = collection.drop();
+            promise.error(function (err) {
+                callback(err);
+            });
+            promise.success(function () {
+                callback(undefined);
+            });
+            promise.complete(function (err) {
+                this._closeDb();
+            }.bind(this));
+        } else {
+            // TODO: Throw authorisation error
+            throw error;
+        }
     },
     
-    insert: function (collectionName, data, callback) {
+    insert: function (principal, collectionName, data, callback) {
+        // TODO: Check that this principal is allowed to do this!!!
+        
         var db = this._getDb();
-            
-        // TODO: pass user so we get the real user
-        var user = {
-            _id: 'anonymous'
-        }
         
         data._createdAt = data._modifiedAt = Date.now();
-        data._createdByUserId = data._modifiedByUserId = user._id;
+        data._createdByPrincipalId = data._modifiedByPrincipalId = principal._principalId;
         
         data._parentId = collectionName;
         data._parentPath = '/' + collectionName;
         
         // Add the creator as default owner
-        data._permissions.owners.push(user._id);
+        data._owners.push(principal._principalId);
             
         var collection = db.get(collectionName);
         var promise = collection.insert(data);
@@ -78,15 +90,18 @@ var MongoDbDatabaseService = createUtility({
             callback(undefined, doc);
         });
         promise.complete(function (err, doc) {
-            db.close();
-        });
+            this._closeDb();
+        }.bind(this));
     },
     
-    update: function (collectionName, id, data, callback) {
+    update: function (principal, collectionName, id, data, callback) {
+        // TODO: Check that this principal is allowed to do this!!!
+        
         // Update object in database
         var db = this._getDb();
         
         data._modifiedAt = Date.now();
+        data._modifiedByPrincipalId = principal._principalId;
 
         // Create a mongodb ObjectID
         var objId = ObjectID.createFromHexString(id);
@@ -100,31 +115,73 @@ var MongoDbDatabaseService = createUtility({
         });
     }, 
     
-    fetchById: function (collectionName, id, callback) {
-
+    fetchById: function (principal, collectionName, id, callback) {
+        // TODO: Check that this principal is allowed to do this!!!
+        
         var db = this._getDb();
         
         // Create a mongodb ObjectID
-        var objId = ObjectID.createFromHexString(id);
+        var objId = ('string' == typeof id ? ObjectId.createFromHexString(id) : id);
         
         var collection = db.get(collectionName);
-        collection.findById(objId, function (err, doc) {
-            db.close();
-            
-            if (err) {
-                return callback(err);
-            };
-            
-            callback(undefined, doc);
-        });    
+        
+        var query = {
+            _id: objId,
+            $or: [{ 
+                // principal is owner and owner may view
+                $and: [
+                    {
+                        _permissionsView: {
+                            $all: ['owner']
+                        }
+                    }, 
+                    {
+                        _owners: {
+                            $all: [principal._principalId]
+                        }
+                    }
+                ]
+            }, {
+                // princpal has role that may view
+                _permissionsView: {
+                    $all: [principal.role]
+                }
+            }]
+        }
+        
+        var simpleQuery = {
+            _id: objId,
+            _owners: {
+                $all: [principal.role]
+            }
+        }
+        
+        var promise = collection.find(query)
+        
+        promise.error(function (err) {
+            callback(err);
+        });
+        
+        promise.success(function (docs) {
+            console.log("Result from query: " + docs.length + " items");
+            // console.log(docs);
 
+            callback(undefined, docs[0]);
+        });
+        promise.complete(function (err, docs) {
+            this._closeDb();
+        }.bind(this));
     },
     
-    query: function (collectionName, query, callback) {
+    query: function (principal, collectionName, query, callback) {
+        // TODO: Add principal credentials check to query
+        
         var db = this._getDb();
         
         console.log("Query [" + collectionName + "]:");
         console.log(query);
+        
+        query['$or']
         
         var collection = db.get(collectionName);
         var promise = collection.find(query)
@@ -139,13 +196,15 @@ var MongoDbDatabaseService = createUtility({
             callback(undefined, docs);
         });
         promise.complete(function (err, docs) {
-            db.close();
-        });
+            this._closeDb();
+        }.bind(this));
     },
         
     delete: function (collectionName, id) {
     }
 });
 
-global.utilityRegistry.registerUtility(MongoDbDatabaseService);
+module.exports = function (mountPoint) {
+    mountPoint.utilityRegistry.registerUtility(MongoDbDatabaseUtility)
+}
 

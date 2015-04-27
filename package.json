@@ -41,6 +41,7 @@
     "mongodb": "~2.0.24",
     "monk": "~1.0.1",
     "moment": "^2.8.4",
+    "mquery": "~1.5.1",
     "node-jsx": "~0.12.3",
     "react": "~0.13.1",
     "react-router": "~0.13.2",
@@ -65,10 +66,13 @@
     "schema-react-formlib": "~0.1.0"
   },
   "devDependencies": {
-    "react-tools": "~0.12.1"
+    "react-tools": "~0.12.1",
+    "expect.js": "~0.3.1",
+    "mocha": "~1.18.2",
+    "mocha-better-spec-reporter": "^1.1.1"
   },
   "scripts": {
-    "test": "gulp test",
+    "test": "./node_modules/mocha/bin/mocha --reporter mocha-better-spec-reporter",
     "start": "node server.js",
     "dev": "node_modules/gulp-nodemon/node_modules/nodemon/bin/nodemon.js server.js"
   },

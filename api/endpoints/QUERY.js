@@ -4,6 +4,7 @@ var statusCodes = require('./statusCodes');
 var IDatabaseService = require('../../app/interfaces').IDatabaseService;
 var IProtonObjectPersist = require('../../app/interfaces').IProtonObjectPersist;
 var components = require('../../app/components');
+var Principal = require('../../app/permissions').Principal;
 
 var QUERY = function (req, res) {
     /*
@@ -30,8 +31,11 @@ var QUERY = function (req, res) {
     
     
     console.log("Let's get these objects...");
+    
+    var principal = req.user || new Principal({_principalId: 'anonymous'});
     var dbUtil = global.utilityRegistry.getUtility(IDatabaseService, 'mongodb');
-    dbUtil.query(objectType, query, function (err, docs) {
+    
+    dbUtil.query(principal, objectType, query, function (err, docs) {
         if (err) {
             return res.status(statusCodes.DatabaseError).json({
                 status: 'error',

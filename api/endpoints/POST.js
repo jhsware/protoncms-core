@@ -3,6 +3,7 @@ var statusCodes = require('./statusCodes');
 var IDatabaseService = require('../../app/interfaces').IDatabaseService;
 var IProtonObjectPersist = require('../../app/interfaces').IProtonObjectPersist;
 var components = require('../../app/components');
+var Principal = require('../../app/permissions').Principal;
 
 var POST = function (req, res) {
     /*
@@ -44,8 +45,11 @@ var POST = function (req, res) {
     
     // Submitted object passed validation so let's persist it to the backen
     console.log("Let's persist this guy...");
-    var pa = global.adapterRegistry.getAdapter(obj, IProtonObjectPersist);
-    pa.persist(function (err, data) {
+    var principal = req.user || new Principal({_principalId: 'anonymous'});
+    var dbUtil = global.utilityRegistry.getUtility(IDatabaseService, 'mongodb');
+    
+    var callback = function (err, obj) {
+
         if (err) {
             return res.status(statusCodes.DatabaseError).json({
                 err: err
@@ -56,7 +60,13 @@ var POST = function (req, res) {
             objectType: data._type,
             data: data
         });
-    });
+    };
+    
+    if (obj._id) {
+        dbUtil.update(principal, collectionName, obj._id, obj, callback);
+    } else {
+        dbUtil.insert(principal, collectionName, obj, callback);
+    }
 };
 
 module.exports = POST;

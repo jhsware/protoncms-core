@@ -3,17 +3,29 @@
 var createObjectPrototype = require('component-registry').createObjectPrototype;
 
 var IPrincipal = require('../interfaces').IPrincipal;
+var IRootPrincipal = require('../interfaces').IRootPrincipal;
 var IPermissions = require('../interfaces').IPermissions;
 
 var Principal = createObjectPrototype({
     implements: [IPrincipal],
     
-    constructor: function (principalId) {
-        this._principalId = principalId;
+    constructor: function (params) {
+        this.role = params.role
+        this._principalId = params.principalId;
     }
 });
 
 module.exports.Principal = Principal;
+
+var RootPrincipal = createObjectPrototype({
+    implements: [IPrincipal, IRootPrincipal],
+    
+    constructor: function () {
+        this._principalId = "root";
+    }
+});
+
+module.exports.rootPrincipal = new RootPrincipal();
 
 
 var Permissions = createObjectPrototype({
@@ -21,12 +33,10 @@ var Permissions = createObjectPrototype({
     
     constructor: function (permissions) {
         // We want to throw an error if no permissions are passed
-        this._permissions = {
-            owners: [],
-            mayView: permissions.mayView,
-            mayEdit: permissions.mayEdit,
-            mayDelete: permissions.mayDelete
-        }
+        this._owners = permissions.owners,
+        this._permissionsView = permissions.mayView,
+        this._permissionsEdit = permissions.mayEdit,
+        this._permissionsDelete = permissions.mayDelete
     }
 });
 

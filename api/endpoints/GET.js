@@ -2,8 +2,8 @@
 var statusCodes = require('./statusCodes');
 
 var IDatabaseService = require('../../app/interfaces').IDatabaseService;
-var IProtonObjectPersist = require('../../app/interfaces').IProtonObjectPersist;
 var components = require('../../app/components');
+var Principal = require('../../app/permissions').Principal;
 
 var GET = function (req, res) {
     /*
@@ -34,8 +34,11 @@ var GET = function (req, res) {
         
     // Submitted object passed validation so let's persist it to the backen
     console.log("Let's get this object...");
+    
+    var principal = req.user || new Principal({_principalId: 'anonymous'});
     var dbUtil = global.utilityRegistry.getUtility(IDatabaseService, 'mongodb');
-    dbUtil.fetchById(objectType, objectId, function (err, obj) {
+    
+    dbUtil.fetchById(principal, objectType, objectId, function (err, obj) {
         
         if (err) {
             return console.error(err);
