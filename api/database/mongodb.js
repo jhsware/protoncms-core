@@ -156,9 +156,53 @@ var MongoDbDatabaseUtility = createUtility({
             }
         }
         
+        var permissionQuery = mquery(collection)
+            .where().or([{ 
+                // principal is owner and owner may view
+                $and: [
+                    {
+                        _permissionsView: {
+                            $all: ['owner']
+                        }
+                    }, 
+                    {
+                        _owners: {
+                            $all: [principal._principalId]
+                        }
+                    }
+                ]
+            }, {
+                // princpal has role that may view
+                _permissionsView: {
+                    $all: [principal.role]
+                }
+            }]).toConstructor();
         
+        /*
         mquery(collection)
-            .where({ _id: objId })
+            .where('_id').equals(objId).or([{ 
+                // principal is owner and owner may view
+                $and: [
+                    {
+                        _permissionsView: {
+                            $all: ['owner']
+                        }
+                    }, 
+                    {
+                        _owners: {
+                            $all: [principal._principalId]
+                        }
+                    }
+                ]
+            }, {
+                // princpal has role that may view
+                _permissionsView: {
+                    $all: [principal.role]
+                }
+            }])
+        */
+        permissionQuery()
+            .where('_id').equals(objId)
             .findOne()
             .then(
                 function (doc) {
