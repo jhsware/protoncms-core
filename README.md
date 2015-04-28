@@ -14,6 +14,17 @@ just run these two commands and it usually fixes things.
 
 ## Developer Notes ###
 
+### Running Tests ###
+To run tests you can either run the whole suite:
+
+    npm test
+
+Or a specified set of tests:
+
+    ./node_modules/mocha/bin/mocha --reporter mocha-better-spec-reporter  --compilers .:test/util-jsxcompiler.js test/test-app*.js
+
+And if you need to debug a test just add --debug-brk and start node-inspector.
+
 ### TODO ###
 
 TODO: Favicon
