@@ -63,7 +63,7 @@ var POST = function (req, res) {
     };
     
     if (obj._id) {
-        dbUtil.update(principal, collectionName, obj._id, obj, callback);
+        dbUtil.update(principal, collectionName, obj, callback);
     } else {
         dbUtil.insert(principal, collectionName, obj, callback);
     }

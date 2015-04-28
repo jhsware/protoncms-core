@@ -13,9 +13,17 @@ var IRootPrincipal = require('../../app/interfaces').IRootPrincipal;
 var dbName = require('../../config').mongoDbName;
 var monkDbUrl = require('../../config').mongoDbHost + '/' + dbName;
 
+var actions = {
+    VIEW: 'View',
+    EDIT: 'Edit',
+    DELETE: 'Delete'
+};
+
 var MongoDbDatabaseUtility = createUtility({
     implements: IDatabaseService,
     name: 'mongodb',
+    
+    _closeDbTimeout: 1000, // in millisecs
     
     _getDb: function () {
         if (!this._db) {
@@ -23,9 +31,9 @@ var MongoDbDatabaseUtility = createUtility({
         }
         // Add connection counter
         if (!this._dbConnections) {
-            this._dbConnections = 1
+            this._dbConnections = 1;
         } else {
-            this._dbConnections++
+            this._dbConnections++;
         }
         // Check if there is a close db timer running, in which case close it
         if (this._dbCloseTimeout) {
@@ -36,14 +44,43 @@ var MongoDbDatabaseUtility = createUtility({
         
     },
     
-    _closeDb: function () {
-        this._dbConnections--
+    _closeDb: function (cb) {
+        this._dbConnections > 0 ? this._dbConnections-- : "";
+        
         this._dbCloseTimeout = setTimeout(function () {
-            if (!this._dbConnections) {
+            if (!this._dbConnections && this._db) {
                 this._db.close();
                 delete this._db;
             }
-        }.bind(this), 1000);
+            cb && cb(undefined);
+        }.bind(this), this._closeDbTimeout);
+    },
+    
+    _getPermissionQuery: function (collection, principal, action) {
+        // TODO: Check if we passed a valid action...
+        
+        var tmpOwnerPermission = {};
+        tmpOwnerPermission['_permissions' + action] = {
+            $all: ['owner']
+        };
+        
+        var tmpRolePermission = {};
+        tmpRolePermission['_permissions' + action] = {
+            $all: [principal.role]
+        };
+            
+        
+        return mquery(collection)
+            .where().or([{ 
+                // principal is owner and owner may view
+                $and: [
+                    tmpOwnerPermission, {
+                        _owners: {
+                            $all: [principal._principalId]
+                        }
+                    }]
+            }, tmpRolePermission])
+            .toConstructor();
     },
     
     drop: function (principal, collectionName, callback) {
@@ -94,7 +131,7 @@ var MongoDbDatabaseUtility = createUtility({
         }.bind(this));
     },
     
-    update: function (principal, collectionName, id, data, callback) {
+    update: function (principal, collectionName, data, callback) {
         // TODO: Check that this principal is allowed to do this!!!
         
         // Update object in database
@@ -104,103 +141,52 @@ var MongoDbDatabaseUtility = createUtility({
         data._modifiedByPrincipalId = principal._principalId;
 
         // Create a mongodb ObjectID
-        var objId = ObjectID.createFromHexString(id);
+        var objId = ('string' == typeof id ? ObjectId.createFromHexString(data._id) : data._id);
 
         var collection = db.get(collectionName);
-        collection.updateById(objId, {
-            $set: data,
-            //$currentDate: { "_modifiedAt": { $type: "timestamp" } }
-        }, function (err, doc) {
-            callback(err, doc);
-        });
+        
+        var permissionQuery = this._getPermissionQuery(collection, principal, actions.EDIT);
+        
+        // Monks findOneAndUpdate doesn't play well with mquery so I need a work around
+        permissionQuery()
+            .where('_id').equals(objId)
+            .findOne()
+            .then(
+                function (doc) {
+                    if (doc === null) {
+                        return callback("You don't have permission");
+                    };
+                    var promise = collection.updateById(objId, data);
+                    promise.error(function (err) {
+                        callback(err);
+                    });
+                    promise.success(function (res) {
+                        callback(undefined, data);
+                    });
+                    promise.complete(function (err) {
+                        this._closeDb();
+                    }.bind(this));
+                }.bind(this),
+            
+                function (err) {
+                    this._closeDb();
+                    callback(err);
+                }.bind(this)
+            )
     }, 
     
-    fetchById: function (principal, collectionName, id, callback) {
+    fetchById: function (principal, collectionName, objId, callback) {
         // TODO: Check that this principal is allowed to do this!!!
         
         var db = this._getDb();
         
         // Create a mongodb ObjectID
-        var objId = ('string' == typeof id ? ObjectId.createFromHexString(id) : id);
+        var objId = ('string' == typeof id ? ObjectId.createFromHexString(objId) : objId);
         
         var collection = db.get(collectionName);
+                
+        var permissionQuery = this._getPermissionQuery(collection, principal, actions.VIEW);
         
-        var query = {
-            _id: objId,
-            $or: [{ 
-                // principal is owner and owner may view
-                $and: [
-                    {
-                        _permissionsView: {
-                            $all: ['owner']
-                        }
-                    }, 
-                    {
-                        _owners: {
-                            $all: [principal._principalId]
-                        }
-                    }
-                ]
-            }, {
-                // princpal has role that may view
-                _permissionsView: {
-                    $all: [principal.role]
-                }
-            }]
-        }
-        
-        var simpleQuery = {
-            _id: objId,
-            _owners: {
-                $all: [principal.role]
-            }
-        }
-        
-        var permissionQuery = mquery(collection)
-            .where().or([{ 
-                // principal is owner and owner may view
-                $and: [
-                    {
-                        _permissionsView: {
-                            $all: ['owner']
-                        }
-                    }, 
-                    {
-                        _owners: {
-                            $all: [principal._principalId]
-                        }
-                    }
-                ]
-            }, {
-                // princpal has role that may view
-                _permissionsView: {
-                    $all: [principal.role]
-                }
-            }]).toConstructor();
-        
-        /*
-        mquery(collection)
-            .where('_id').equals(objId).or([{ 
-                // principal is owner and owner may view
-                $and: [
-                    {
-                        _permissionsView: {
-                            $all: ['owner']
-                        }
-                    }, 
-                    {
-                        _owners: {
-                            $all: [principal._principalId]
-                        }
-                    }
-                ]
-            }, {
-                // princpal has role that may view
-                _permissionsView: {
-                    $all: [principal.role]
-                }
-            }])
-        */
         permissionQuery()
             .where('_id').equals(objId)
             .findOne()
@@ -209,7 +195,7 @@ var MongoDbDatabaseUtility = createUtility({
                     callback(undefined, doc);
                 },
                 
-                function (error) {
+                function (err) {
                     callback(err);
                 }
             )
@@ -223,29 +209,35 @@ var MongoDbDatabaseUtility = createUtility({
         
         var db = this._getDb();
         
-        console.log("Query [" + collectionName + "]:");
-        console.log(query);
-        
-        query['$or']
+        // console.log("Query [" + collectionName + "]:");
+        // console.log(query);
         
         var collection = db.get(collectionName);
-        var promise = collection.find(query)
-        promise.error(function (err) {
-            callback(err);
-        });
+                
+        var permissionQuery = this._getPermissionQuery(collection, principal, actions.VIEW);
         
-        promise.success(function (docs) {
-            console.log("Result from query: " + docs.length + " items");
-            // console.log(docs);
-
-            callback(undefined, docs);
-        });
-        promise.complete(function (err, docs) {
-            this._closeDb();
-        }.bind(this));
+        permissionQuery()
+            .find(query)
+            .then(
+                function (doc) {
+                    callback(undefined, doc);
+                },
+            
+                function (err) {
+                    callback(err);
+                }
+            )
+            .then(function () {
+                this._closeDb();
+            }.bind(this));
     },
         
     delete: function (collectionName, id) {
+        // TODO: Implement delete document
+        
+        // 1 perform a find to check permissions
+        
+        // 2 delete if allowed
     }
 });
 

@@ -5,6 +5,7 @@ var LocalStrategy = require('passport-local').Strategy;
 
 var IDatabaseService = require('../app/interfaces').IDatabaseService;
 var components = require('../app/components');
+var rootPrincipal = require('../app/permissions').rootPrincipal;
 
 console.log("[AUTHENTICATION] Register local strategy");
 passport.use(new LocalStrategy(
@@ -13,7 +14,7 @@ passport.use(new LocalStrategy(
       console.log("[AUTHENTICATION] ...finding user...");
       
       var dbUtil = global.utilityRegistry.getUtility(IDatabaseService, 'mongodb');
-      dbUtil.query('User', { email: username }, function (err, user) {
+      dbUtil.query(rootPrincipal, 'User', { email: username }, function (err, user) {
           if (err) { return done(err); }
           
           if (!user) {
@@ -42,14 +43,12 @@ passport.serializeUser(function(user, done) {
     done(null, user._id);
 });
 
-var rootPrincipal = require('../app/permissions').rootPrincipal;
-
 passport.deserializeUser(function(id, done) {
     // TODO: Restrict fields fetched to only those relevant for access control
     var dbUtil = global.utilityRegistry.getUtility(IDatabaseService, 'mongodb');
     
     dbUtil.fetchById(rootPrincipal, 'User', id, function (err, user) {
-        // TODO: Create a principal that can be used for permission checks
+        // Create a principal that can be used for permission checks
         var principal = new Principal(user);
         
         done(err, principal);
