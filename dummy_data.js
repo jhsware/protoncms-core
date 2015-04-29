@@ -69,12 +69,11 @@ var createDummyObjects = function (collectionName, ObjectPrototype, nrofObjects)
             dda.populate();
         
             var data = {};
-            console.log("Persisting to backend:");
             for(var key in obj){
                 // check also if property is not inherited from prototype
                 if (obj.hasOwnProperty(key)) { 
                     data[key] = obj[key];
-                    console.log(key + ": " + obj[key]);
+                    // console.log(key + ": " + obj[key]);
                 }
             }
         
