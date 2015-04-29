@@ -33,10 +33,12 @@ var FetchDataUtility = createUtility({
                 return console.log(err);
             }; 
             
-            var ObjectPrototype = components[objectType];
             
             var objList = body.data.map(function (item) {
-                return new ObjectPrototype(item);
+                var ObjectPrototype = components[item._type];
+                var obj = new ObjectPrototype(item);
+                // console.log("Created [" + obj._implements[0].name + "] " + obj._implements[0].interfaceId);
+                return obj;
             })
             
             var outp = {
