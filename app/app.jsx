@@ -58,8 +58,9 @@ function renderApp(req, res, next) {
                 try {
                     var html = React.renderToString(<Handler params={state.params} data={result.body} />);
                 } catch (e) {
-                    console.error(e.stack);
-                    var html = e.stack;
+                    console.log("[APP] error when rendering view");
+                    console.error(e);
+                    var html = "There was an error rendering this view :( check the console for more info!";
                 }
                 return res.send('<!doctype html>\n' + html);
             });
@@ -93,6 +94,7 @@ if (typeof window !== 'undefined') {
                     try {
                         return React.render(<Handler params={state.params} data={result.body} />, document);
                     } catch (e) {
+                        console.log("[APP] error when rendering view");
                         console.error(e.stack);
                     }
                     
