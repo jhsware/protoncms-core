@@ -10,8 +10,16 @@ var Principal = createObjectPrototype({
     implements: [IPrincipal],
     
     constructor: function (params) {
-        this.role = params.role
+        this.role = params.role;
         this._principalId = params.principalId;
+        
+        if (params.role) {
+            delete params.role;
+        }
+        
+        if (params.principalId) {
+            delete params.principalId
+        }
     }
 });
 
@@ -25,6 +33,7 @@ var RootPrincipal = createObjectPrototype({
     }
 });
 
+module.exports.RootPrincipal = RootPrincipal;
 module.exports.rootPrincipal = new RootPrincipal();
 
 
