@@ -38,7 +38,7 @@ var POST = function (req, res) {
     if (schemaErrors) { 
         // console.log('### Data Error! ###');
         // console.log(schemaErrors);
-        schemaErrors.fieldErrors.birth_year = { type: 'required', message: 'REQUIRED!' };
+        // For testing: schemaErrors.fieldErrors.birth_year = { type: 'required', message: 'REQUIRED!' };
         return res.status(statusCodes.ValidationError).json({
             server_errors: schemaErrors
         });
@@ -63,10 +63,13 @@ var POST = function (req, res) {
         });
     };
     
-    if (obj._id) {
-        dbUtil.update(principal, collectionName, obj, callback);
+    // NOTE! We need to persist the incoming data, otherwise we store properties
+    // that are added by the object constructor. We only created the object to allow 
+    // proper validation.
+    if (theData._id) {
+        dbUtil.update(principal, collectionName, theData, callback);
     } else {
-        dbUtil.insert(principal, collectionName, obj, callback);
+        dbUtil.insert(principal, collectionName, theData, callback);
     }
 };
 
