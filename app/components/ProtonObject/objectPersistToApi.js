@@ -1,6 +1,4 @@
 'use strict';
-var _ = requrie('lodash');
-
 var createAdapter = require('component-registry').createAdapter;
 
 var httpinvoke = require('httpinvoke');
