@@ -54,7 +54,9 @@ passport.deserializeUser(function(id, done) {
             var principal = new Principal(user);
             return done(err, principal);
         } else {
-            return done(null, false);  // invalidates the existing login session.
+            // Invalidates the existing login session if no user was found.
+            // https://github.com/jaredhanson/passport/issues/6
+            return done(null, false);
         }
     });
 });
