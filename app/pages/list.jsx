@@ -20,8 +20,8 @@ var Page = React.createClass({
         var data = this.props.data;
         
         var contentEls = data.content.map(function (obj, i) {
-            var ReactComponent = global.adapterRegistry.getAdapter(obj, IListItemView).ReactComponent;
-            obj._parentId = parentId;
+            var listView = global.adapterRegistry.getAdapter(obj, IListItemView);
+            var ReactComponent = listView.ReactComponent;
             return <ReactComponent key={'item-' + i} context={obj} />;            
         });
         
