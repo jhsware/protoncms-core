@@ -1,4 +1,5 @@
 'use strict';
+var _ = requrie('lodash');
 
 var createAdapter = require('component-registry').createAdapter;
 
@@ -17,6 +18,16 @@ var ProtonObjectPersist = createAdapter({
         // Pass to backend
         
         var apiPath = "/api/" + this.context._type + '/' + this.context._id;
+        
+        var data = {};
+        console.log("Persisting to backend:");
+        for(var key in this.context){
+            // check also if property is not inherited from prototype
+            if (this.context.hasOwnProperty(key)) { 
+                data[key] = this.context[key];
+                console.log(key + ": " + this.context[key]);
+            }
+        }
         
         httpinvoke(apiPath, "POST", {
             headers: {
