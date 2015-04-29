@@ -46,27 +46,41 @@ var components = require('./app/components');
 var rootPrincipal = require('./app/permissions').rootPrincipal;
 var Principal = require('./app/permissions').Principal;
 
-var createDummyObjects = function (objectType, nrofObjects) {
+var createDummyObjects = function (collectionName, ObjectPrototype, nrofObjects) {
     
     
     
     var dbUtil = global.utilityRegistry.getUtility(IDatabaseService, 'mongodb');
-    dbUtil.drop(rootPrincipal, objectType, function () {
+    dbUtil.drop(rootPrincipal, collectionName, function () {
+        
+        var dbUtil = global.utilityRegistry.getUtility(IDatabaseService, 'mongodb');
+        var principal = new Principal({
+            principalId: 'dummy_data',
+            role: 'dummy_data'
+        });
+
         for (var i = 0; i < nrofObjects; i++ ) {
-            var ObjectPrototype = components[objectType];
             
-            var obj = new ObjectPrototype();
+            var obj = new ObjectPrototype({
+                principalId: 'user-' + i,
+                role: 'writer'
+            });
             var dda = global.adapterRegistry.getAdapter(obj, IDummyData);
             dda.populate();
         
+            var data = {};
+            console.log("Persisting to backend:");
+            for(var key in obj){
+                // check also if property is not inherited from prototype
+                if (obj.hasOwnProperty(key)) { 
+                    data[key] = obj[key];
+                    console.log(key + ": " + obj[key]);
+                }
+            }
+        
             // Submitted object passed validation so let's persist it to the backend
-            
-            var dbUtil = global.utilityRegistry.getUtility(IDatabaseService, 'mongodb');
-
-            var principal = new Principal({_principalId: 'dummy_data'});
-            var collectionName = obj._type;
-            dbUtil.insert(principal, collectionName, obj, function (err, obj) {
-                console.log((i + 1) + ': Created [' + objectType + ']: ' + obj.title);
+            dbUtil.insert(principal, collectionName, data, function (err, obj) {
+                console.log((i + 1) + ': Created [' + data._type + ']: ' + data.title);
             });
         
         };
@@ -74,4 +88,4 @@ var createDummyObjects = function (objectType, nrofObjects) {
 };
 
 
-createDummyObjects('User', 20);
+createDummyObjects('User', components.User, 20);

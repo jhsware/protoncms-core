@@ -57,6 +57,11 @@ var MongoDbDatabaseUtility = createUtility({
     },
     
     _getPermissionQuery: function (collection, principal, action) {
+        if (IRootPrincipal.providedBy(principal)) {
+            // Root can do ANYTHING!
+            return mquery(collection).toConstructor();
+        }
+        
         // TODO: Check if we passed a valid action...
         
         var tmpOwnerPermission = {};
