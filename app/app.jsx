@@ -1,13 +1,8 @@
 
 'use strict';
 
-var _ = require('lodash');
-var React = require('react');
-var Router = require('react-router');
-var routes = require('./routes');
-
 /*
-    Create the global component registry
+    Create the global component registry first because it is used everywhere!!!
 */    
 if (!global.utilityRegistry) {
     console.log('[App] Creating component utility registry');
@@ -23,6 +18,12 @@ if (!global.adapterRegistry) {
     /END COMPONENT REGISTRY/
 */
 
+
+var _ = require('lodash');
+var React = require('react');
+var Router = require('react-router');
+var routes = require('./routes');
+
 // Register all our input field widgets
 // Change this to override
 require('schema-react-formlib').registerAllWidgets({
@@ -37,6 +38,8 @@ require('./network');
 require('./layouts/AutoForm');
 
 function renderApp(req, res, next) {
+    // TODO: Get current user (in window render too!)
+    
     Router.run(routes, req.path, function (Handler, state) {
         var dataFetchers = state.routes.filter(function (route) {
             return route.handler.fetchData;
@@ -72,6 +75,7 @@ function renderApp(req, res, next) {
 }
 
 if (typeof window !== 'undefined') {
+    // TODO: Get current user (in server render too!)
 
     // Perform routing
     Router.run(routes, Router.HistoryLocation, function (Handler, state) {
