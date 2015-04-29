@@ -26,6 +26,7 @@ var POST = function (req, res) {
     var theData = req.body;
     var objectType = theData._type;
     var objectId = req.params.id;
+    var collectionName = objectType; // TODO: This should be changed to proper
     
     var ObjectPrototype = components[objectType];
     
@@ -48,7 +49,7 @@ var POST = function (req, res) {
     var principal = req.user || new Principal({_principalId: 'anonymous'});
     var dbUtil = global.utilityRegistry.getUtility(IDatabaseService, 'mongodb');
     
-    var callback = function (err, obj) {
+    var callback = function (err, data) {
 
         if (err) {
             return res.status(statusCodes.DatabaseError).json({
