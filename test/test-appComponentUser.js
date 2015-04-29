@@ -25,19 +25,24 @@ var _createRegistry = (function () {
     /END COMPONENT REGISTRY/
 */  
 
-
-// Register database service for mongodb
 var User = require('../app/components').User;
 
 describe('A User', function() {
     
     it('can be created', function() {
         var user = new User({
+            principalId: "user",
             title: 'Test User',
             role: 'manager'
         });
+        
         expect(user).to.not.be(undefined);
         expect(user.role).to.equal('manager');
     });
+    
+    // TODO: implements IPrincipal
+    // TODO: implements IUser
+    // TODO: has unique principalId
+    // TODO: has unique email
 
 });

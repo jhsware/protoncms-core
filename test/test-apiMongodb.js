@@ -352,3 +352,106 @@ describe('The mongodb database service data access', function() {
         
     });
 });
+
+describe('The mongodb database service data access as root', function() {
+    
+    var testPrincipal;
+    var dbUtil;
+    
+    before(function(done) {
+      // get the env specific collection interface
+        testPrincipal = new Principal({
+            principalId: 'testPrincipal',
+            role: 'norole'
+        });
+                
+        dbUtil = global.utilityRegistry.getUtility(IDatabaseService, 'mongodb');
+        
+        done();
+    })
+
+    afterEach(function(done){
+        dbUtil.drop(rootPrincipal, 'test', function (err) {
+            done();
+        });
+    })
+    
+    it('allows creation of data as root', function(done) {
+
+        var testObject = getTestObject();
+        
+        dbUtil.insert(rootPrincipal, 'test', testObject, function (err, doc) {
+            expect(doc._id).to.not.be(undefined);
+            done();
+        });
+    });
+    
+    it('allows reading data if root', function(done) {
+        
+
+        var testObject = getTestObject();
+        
+        dbUtil.insert(testPrincipal, 'test', testObject, function (err, doc) {
+            expect(doc).to.not.be(undefined);
+            var obj = doc;
+        
+            dbUtil.fetchById(rootPrincipal, 'test', obj._id, function (err, doc) {
+                expect(doc).to.not.be(undefined);
+                expect(err).to.be(undefined);
+                expect(doc._id.toString()).to.equal(obj._id.toString());
+                done()
+            });
+        
+        });            
+
+        
+    });
+    
+    it('allows updating data if root', function(done) {
+        
+        
+        var testObject = getTestObject();
+
+        dbUtil.insert(testPrincipal, 'test', testObject, function (err, doc) {
+            expect(doc).to.not.be(undefined);
+            var obj = doc;
+            obj.title = "I am updated!";
+        
+            dbUtil.update(rootPrincipal, 'test', obj, function (err, doc) {
+                // I am not receiving the new object here so to test it I need to perform
+                // a new fetch. 
+                dbUtil.fetchById(rootPrincipal, 'test', obj._id, function (err, doc) {
+                    expect(err).to.be(undefined);
+                    expect(doc).to.not.be(undefined);
+                    expect(doc._id.toString()).to.equal(obj._id.toString());
+                    expect(doc.title).to.equal("I am updated!");
+                    done();
+                    
+                });
+            });
+        
+        });
+        
+    });
+    
+    it('allows querying data if root', function(done) {
+        
+        var testObject = getTestObject();
+
+        dbUtil.insert(testPrincipal, 'test', testObject, function (err, doc) {
+            expect(err).to.be(undefined);
+            expect(doc).to.not.be(undefined);
+        
+            dbUtil.query(rootPrincipal, 'test', {title: "Test Object!"}, function (err, docs) {
+                expect(err).to.be(undefined);
+                expect(docs).to.not.be(undefined);
+                expect(docs.length).to.equal(1);
+                expect(docs[0].title).to.equal("Test Object!");
+                done();
+            });
+        
+        });            
+        
+    });    
+
+});
