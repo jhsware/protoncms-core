@@ -9,15 +9,16 @@ var User = createObjectPrototype({
     implements: [IUser],
     extends: [Principal, ProtonObject],
     
-    constructor: function () {
-        this._IPrincpal.constructor.call(this, {
-            principalId: 'user_1', // TODO: Create a proper principal id
-            role: 'editor' // default role
-        }); 
+    constructor: function (params) {
+        this._IPrincipal.constructor.call(this, {
+            principalId: params.principalId,
+            role: params.role
+        });
         this._IProtonObject.constructor.call(this); // TODO: Customised permissions?
         
         this._type = 'User';
         this.title = 'New User object!';
+        
     }
 })
 
