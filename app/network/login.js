@@ -40,7 +40,7 @@ var ApiCallUtility = createUtility({
             console.log(body);
             
             var outp = {
-                body: body
+                data: body.data
             };
             callback(undefined, outp, statusCode);
         });
