@@ -7,6 +7,8 @@ var IActionButtonWidget = require('schema-react-formlib').interfaces.IActionButt
 var IAutoFormWidget = require('../interfaces').IAutoFormWidget;
 var loginForm = require('../forms/loginForm');
 
+var components = require('../components');
+
 var FormActionBar = require('../layouts/FormActionBar');
 
 
@@ -40,9 +42,14 @@ var Page = React.createClass({
         if (err) {
             // Failed, now we need to get the errors out there...
             alert('There was a serious login error!');
+            global.currentUser = undefined;
         } else if (statusCode != 200) {
             alert('The user could not be authenticated!');
+            global.currentUser = undefined;
         } else {
+            var ObjectPrototype = components[body.data._type];
+            var user = new ObjectPrototype(body.data);
+            global.currentUser = user;
             this.context.router.transitionTo('/');            
         }
         
