@@ -6,6 +6,7 @@ var LocalStrategy = require('passport-local').Strategy;
 var IDatabaseService = require('../app/interfaces').IDatabaseService;
 var components = require('../app/components');
 var rootPrincipal = require('../app/permissions').rootPrincipal;
+var Principal = require('../app/permissions').Principal;
 
 console.log("[AUTHENTICATION] Register local strategy");
 passport.use(new LocalStrategy(
@@ -49,9 +50,12 @@ passport.deserializeUser(function(id, done) {
     
     dbUtil.fetchById(rootPrincipal, 'User', id, function (err, user) {
         // Create a principal that can be used for permission checks
-        var principal = new Principal(user);
-        
-        done(err, principal);
+        if (user) {
+            var principal = new Principal(user);
+            return done(err, principal);
+        } else {
+            return done(null, false);  // invalidates the existing login session.
+        }
     });
 });
 
