@@ -14,7 +14,13 @@ var FetchDataUtility = createUtility({
                 
         var ObjectPrototype = components[params.objectType];
         
-        var obj = new ObjectPrototype();
+        // TODO: Figure out how we set the principalId in a smart way
+        var obj = new ObjectPrototype({
+            principalId: 'user-' + Date.now(),
+            role: 'editor'
+        });
+        
+        console.log("Created [" + obj._implements[0].name + "] " + obj._implements[0].interfaceId);
         
         var outp = {
             status: 200,
