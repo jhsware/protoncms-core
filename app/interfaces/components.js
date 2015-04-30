@@ -34,6 +34,16 @@ module.exports.IProtonObject = createInterface({
     }
 });
 
+module.exports.IObjectPrototypeFactory = createInterface({
+    // Base Object
+    name: 'IObjectPrototypeFactory',
+    members: {
+        getPrototype: "function returns an object prototype",
+        getObject: "function (data) returns a new object"
+    }
+});
+
+
 module.exports.IUser = createInterface({
     // User object, inherit from IProtonObject
     name: 'IUser',

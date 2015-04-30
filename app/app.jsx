@@ -24,6 +24,9 @@ var React = require('react');
 var Router = require('react-router');
 var routes = require('./routes');
 
+var IObjectPrototypeFactory = require('./interfaces').IObjectPrototypeFactory;
+var IProtonObject = require('./interfaces').IProtonObject;
+
 // Register all our input field widgets
 // Change this to override
 require('schema-react-formlib').registerAllWidgets({
@@ -91,24 +94,77 @@ if (typeof window !== 'undefined') {
         if (dataFetchers.length > 0) {
             var routeName = dataFetchers[0].name;
             var fetchData = dataFetchers[0].handler.fetchData;
-
-            fetchData(state.params, function (err, result) {
-                if (err || result.status != 200) {
-                    // Pass error object to
-                    console.log("[APP] We got an error!");
-                    // TODO: Show error modal
-                    //return alert("We got an error! See console");
-                } else {
-                    // All is ok, just render the page
-                    try {
-                        return React.render(<Handler params={state.params} data={result.body} />, document);
-                    } catch (e) {
-                        console.log("[APP] error when rendering view");
-                        console.error(e.stack);
+            
+            if (typeof window.serverData !== 'undefined') {
+                
+                // We got data from the server so we use it instead of making a new call to
+                // the api
+                var deserialize = function (item) {
+                    if (Array.isArray(item)) {
+                        
+                        // Item is an array so lets create one and iterate over the input
+                        var outp = []
+                        for (var i = 0, imax = item.length; i < imax; i++) {
+                            outp.push(deserialize(item[i]))
+                        }
+                        return outp;
+                        
+                    } else if (typeof item === "object" && item.hasOwnProperty('_type')) {
+                        
+                        // Ok so we got a proton object. We need to create it with the prototype factory
+                        var ofu = global.utilityRegistry.getUtility(IObjectPrototypeFactory, item._type);
+                        return ofu.getObject(item);
+                        
+                    } else if (typeof item === "object"){
+                        
+                        // We will assume this is a dictionary style object and deserialize it
+                        // straight up (we can't handle object with functions unless they implement
+                        // IProtonObject)
+                        var outp = {};
+                        for (var key in item) {
+                            outp[key] = deserialize(item[key]);
+                        }
+                        return outp;
+                        
+                    } else {
+                        
+                        // Ok, it is just an ordinary value, we just return it
+                        return item;
                     }
-                    
                 }
-            });
+                
+                var content = deserialize(window.serverData);
+                window.serverData = undefined;
+                
+                try {
+                    return React.render(<Handler params={state.params} data={content} />, document);
+                    
+                } catch (e) {
+                    console.log("[APP] error when rendering view");
+                    console.error(e.stack);
+                }
+            } else {
+                // When running on client we make proper API-calls
+                fetchData(state.params, function (err, result) {
+                    if (err || result.status != 200) {
+                        // Pass error object to
+                        console.log("[APP] We got an error!");
+                        // TODO: Show error modal
+                        //return alert("We got an error! See console");
+                    } else {
+                        // All is ok, just render the page
+                        try {
+                            return React.render(<Handler params={state.params} data={result.body} />, document);
+                        
+                        } catch (e) {
+                            console.log("[APP] error when rendering view");
+                            console.error(e.stack);
+                        }
+                    
+                    }
+                });                
+            }
+
         } else {
             return React.render(<Handler params={state.params} />, document);
         };

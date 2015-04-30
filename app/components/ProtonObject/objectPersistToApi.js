@@ -17,6 +17,7 @@ var ProtonObjectPersist = createAdapter({
         
         var apiPath = "/api/" + this.context._type + '/' + this.context._id;
         
+        /*
         var data = {};
         console.log("Persisting to backend:");
         for(var key in this.context){
@@ -26,6 +27,8 @@ var ProtonObjectPersist = createAdapter({
                 console.log(key + ": " + this.context[key]);
             }
         }
+        */
+        var data = this.context.toJSON();
         
         httpinvoke(apiPath, "POST", {
             headers: {

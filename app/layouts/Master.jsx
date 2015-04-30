@@ -32,8 +32,29 @@ var Master = React.createClass({
             currentUser: user
         };
     },
+    getInitialState: function () {
+        return {
+            serverDataRead: false
+        }
+    },
+    
+    componentDidMount: function () {
+        window.initialServerState = window.serverData;
+        var state = this.state;
+        state.serverDataRead = true;
+        return this.setState(state);
+    },
+    
     render: function() {
         var data = this.props.data || {};
+        
+        if (!this.state.serverDataRead) {
+            var tmp = JSON.stringify(this.props.data);
+            var serverData = "var serverData = " + tmp + ";";            
+        } else {
+            var serverData = "// Data has been picked up by client"
+        };
+        
         return (
             <html>
                 <head>
@@ -48,6 +69,8 @@ var Master = React.createClass({
                     <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap-theme.min.css" />
 
                     <link rel="stylesheet" href="/assets/css/app.css" />
+            
+                    <script dangerouslySetInnerHTML={{__html: serverData}}></script>
 
                 </head>
 
