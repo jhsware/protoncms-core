@@ -21,6 +21,8 @@ module.exports = function Sessions(url, secret) {
         touchAfter: config.sessionExpiration - 60, // https://github.com/kcbanner/connect-mongo#lazy-session-update
         // TODO: To support concurrency read this https://github.com/kcbanner/connect-mongo#set-mongodb-to-clean-expired-sessions-default-mode
     });
+    
+    // TODO: Add expiration!!!
     var theSession = session({
         secret: secret,
         store: store,

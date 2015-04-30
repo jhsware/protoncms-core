@@ -44,7 +44,12 @@ function renderApp(req, res, next) {
         var dataFetchers = state.routes.filter(function (route) {
             return route.handler.fetchData;
         });
-
+        
+        // Pass the session id with params so we can set it to
+        // retrieve the session even with server side API calls
+        // (first server side render)
+        state.params.sessionId = res.req.sessionID;
+        
         if (dataFetchers.length > 0) {
             var routeName = dataFetchers[0].name;
             var fetchData = dataFetchers[0].handler.fetchData;

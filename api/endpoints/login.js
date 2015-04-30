@@ -43,7 +43,7 @@ var login = function(req, res, next) {
                 data: user
             });
         });
-    })(req, res, next); // Don't forget to call the authenticator!!!
+    })(req, res, next); // Don't forget to call the returnet authenticator!!!
 };
 
 module.exports = login;

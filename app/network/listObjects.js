@@ -16,6 +16,17 @@ var FetchDataUtility = createUtility({
         
         var objectType = params.objectType || 'User';
         
+        // If we passed the sessionId with the params it means
+        // that this is a server side request and we need to pass
+        // the session id manually
+        if (typeof params.sessionId === "string") {
+            var theHeaders = {
+                'x-session-id': params.sessionId
+            }
+        } else {
+            var theHeaders = {};
+        };
+        
         if (typeof Window === 'undefined') {
             var host = 'http://127.0.0.1:5000';
         } else {
@@ -26,7 +37,8 @@ var FetchDataUtility = createUtility({
         httpinvoke(apiPath, "GET", {
             outputType: "json",
             converters: {'text json': JSON.parse},
-            timeout: 5000
+            timeout: 5000,
+            headers: theHeaders,
         }, function (err, body, statusCode, headers) {
             if (err) {
                 console.error('Server Error:');
