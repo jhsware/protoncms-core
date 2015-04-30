@@ -14,11 +14,25 @@ just run these two commands and it usually fixes things.
 
 ## Developer Notes ###
 
+### Running Tests ###
+To run tests you can either run the whole suite:
+
+    npm test
+
+Or a specified set of tests:
+
+    ./node_modules/mocha/bin/mocha --reporter mocha-better-spec-reporter  --compilers .:test/util-jsxcompiler.js test/test-app*.js
+
+And if you need to debug a test just add --debug-brk and start node-inspector.
+
 ### TODO ###
 
 TODO: Favicon
     "serve-favicon": "~2.1.3",
 
+TODO: When creating an object, allow creation through interface to limit what properties are set something like:
+        new ObjectPrototype(IObjectInterface(data));
+        
 STARTED: proper data fetching from API with object type handling
     TODO: Pass back server errors
     TODO: Add search endpoint

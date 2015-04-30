@@ -6,7 +6,32 @@ var React = require('react'),
 var ReactRouter = require('react-router');
 var Link        = ReactRouter.Link;
 
+var UserWidget = React.createClass({
+    contextTypes: {
+         currentUser: React.PropTypes.object
+    },
+    
+    render: function () {
+        return (
+            <li className="mainMenu-userWidget">
+                <Link className="mainMenu-itemLink" to="/users/login">Login</Link>
+            </li>
+        );
+    }
+});
+
 var Master = React.createClass({
+    
+    childContextTypes: {
+         currentUser: React.PropTypes.object
+    },
+    
+    getChildContext: function () {
+        var user = global.currentUser;
+        return {
+            currentUser: user
+        };
+    },
     render: function() {
         var data = this.props.data || {};
         return (
@@ -30,7 +55,9 @@ var Master = React.createClass({
                     <ul className="mainMenu">
                         <li className="mainMenu-toggleContentMenu">CM</li>
                         <li className="mainMenu-title">ProtonCMS</li>
-                        <li className="mainMenu-userWidget">Log in</li>
+            
+                        <UserWidget />
+            
                     </ul>
                     <ul className="contentMenu">
                         <li className="contentMenu-item"><Link className="contentMenu-itemLink" to="/users">Users</Link></li>

@@ -32,7 +32,7 @@ if (!global.adapterRegistry) {
 */
 
 // Register database services
-require('./api/database');
+require('./api/database/mongodb')(global);
 
 // Register field dummy data adapters
 require('schema-dummy-data').registerAllAdapters({
@@ -41,25 +41,45 @@ require('schema-dummy-data').registerAllAdapters({
 });
 
 var IDatabaseService = require('./app/interfaces').IDatabaseService;
-var IProtonObjectPersist = require('./app/interfaces').IProtonObjectPersist;
 var IDummyData = require('./app/interfaces').IDummyData;
 var components = require('./app/components');
+var rootPrincipal = require('./app/permissions').rootPrincipal;
+var Principal = require('./app/permissions').Principal;
 
-var createDummyObjects = function (objectType, nrofObjects) {
+var createDummyObjects = function (collectionName, ObjectPrototype, nrofObjects) {
+    
+    
     
     var dbUtil = global.utilityRegistry.getUtility(IDatabaseService, 'mongodb');
-    dbUtil.drop(objectType, function () {
-        for (var i = 0; i < nrofObjects; i++ ) {
-            var ObjectPrototype = components[objectType];
+    dbUtil.drop(rootPrincipal, collectionName, function () {
         
-            var obj = new ObjectPrototype();
+        var dbUtil = global.utilityRegistry.getUtility(IDatabaseService, 'mongodb');
+        var principal = new Principal({
+            principalId: 'dummy_data',
+            role: 'dummy_data'
+        });
+
+        for (var i = 0; i < nrofObjects; i++ ) {
+            
+            var obj = new ObjectPrototype({
+                principalId: 'user-' + i,
+                role: 'writer'
+            });
             var dda = global.adapterRegistry.getAdapter(obj, IDummyData);
             dda.populate();
         
+            var data = {};
+            for(var key in obj){
+                // check also if property is not inherited from prototype
+                if (obj.hasOwnProperty(key)) { 
+                    data[key] = obj[key];
+                    // console.log(key + ": " + obj[key]);
+                }
+            }
+        
             // Submitted object passed validation so let's persist it to the backend
-            var pa = global.adapterRegistry.getAdapter(obj, IProtonObjectPersist);
-            pa.persist(function () {
-                console.log((i + 1) + ': Created [' + objectType + ']: ' + obj.title);
+            dbUtil.insert(principal, collectionName, data, function (err, obj) {
+                console.log((i + 1) + ': Created [' + data._type + ']: ' + data.title);
             });
         
         };
@@ -67,4 +87,4 @@ var createDummyObjects = function (objectType, nrofObjects) {
 };
 
 
-createDummyObjects('User', 20);
+createDummyObjects('User', components.User, 20);

@@ -25,7 +25,12 @@ module.exports.IProtonObject = createInterface({
         _parentId: "ro string",
         _createdAt: "ro datetime",
         _modifiedAt: "ro datetime",
-        _objectType: "ro string"
+        _objectType: "ro string",
+        // TODO: Add these:
+        _owners: "rw string",
+        _createdBy: "ro string",
+        _modifiedBy: "ro string",
+        
     }
 });
 
@@ -38,6 +43,12 @@ module.exports.IUser = createInterface({
                 label: 'Title',
                 palceholder: 'Type here...',
                 help: 'This is the title of your object, used in lists etc.',
+                required: true
+            }),
+            email: validators.emailField({
+                label: 'E-mail',
+                palceholder: 'Type here...',
+                help: 'This is your e-mail, used for login and recovering passwords',
                 required: true
             }),
             role: validators.selectField({
