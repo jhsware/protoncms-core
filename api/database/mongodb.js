@@ -56,7 +56,7 @@ var MongoDbDatabaseUtility = createUtility({
         }.bind(this), this._closeDbTimeout);
     },
     
-    _getPermissionQuery: function (collection, principal, action) {
+    _getPermissionQuery: function (principal, collection, action) {
         if (IRootPrincipal.providedBy(principal)) {
             // Root can do ANYTHING!
             return mquery(collection).toConstructor();
@@ -150,7 +150,7 @@ var MongoDbDatabaseUtility = createUtility({
 
         var collection = db.get(collectionName);
         
-        var permissionQuery = this._getPermissionQuery(collection, principal, actions.EDIT);
+        var permissionQuery = this._getPermissionQuery(principal, collection, actions.EDIT);
         
         // Monks findOneAndUpdate doesn't play well with mquery so I need a work around
         permissionQuery()
@@ -190,7 +190,7 @@ var MongoDbDatabaseUtility = createUtility({
         
         var collection = db.get(collectionName);
                 
-        var permissionQuery = this._getPermissionQuery(collection, principal, actions.VIEW);
+        var permissionQuery = this._getPermissionQuery(principal, collection, actions.VIEW);
         
         permissionQuery()
             .where('_id').equals(objId)
@@ -219,7 +219,7 @@ var MongoDbDatabaseUtility = createUtility({
         
         var collection = db.get(collectionName);
                 
-        var permissionQuery = this._getPermissionQuery(collection, principal, actions.VIEW);
+        var permissionQuery = this._getPermissionQuery(principal, collection, actions.VIEW);
         
         permissionQuery()
             .find(query)
