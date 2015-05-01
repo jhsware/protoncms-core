@@ -39,8 +39,6 @@ require('./layouts/AutoForm');
 
 function renderApp(req, res, next) {
     
-    global.currentUser = req.user;
-    
     Router.run(routes, req.path, function (Handler, state) {
         var dataFetchers = state.routes.filter(function (route) {
             return route.handler.fetchData;
@@ -64,8 +62,9 @@ function renderApp(req, res, next) {
                     return next(err);
                 }
                 
-                // Add the currently logged in user to the request
-                result.body.currentUser = global.currentUser;
+                // Add the currently logged in user to the request, but we need to stringify and
+                // deserialize so we are sure that it looks the same as the data sent to the client
+                result.body.currentUser = network.deserialize(JSON.stringify(res.req.user));
                 
                 try {
                     var html = React.renderToString(<Handler params={state.params} data={result.body} />);
