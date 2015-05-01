@@ -46,7 +46,6 @@ var GET = function (req, res) {
         
         // Let's return the result
         return res.status(statusCodes.RequestOk).json({
-            objectType: obj._type,
             data: obj
         });
         

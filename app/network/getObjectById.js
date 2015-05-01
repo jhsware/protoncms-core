@@ -29,19 +29,24 @@ var FetchDataUtility = createUtility({
                 return callback(err);
             };
             
-            var ObjectPrototype = components[body.objectType];
+            if (body.data) {
+                var ObjectPrototype = components[body.data._type];
             
-            var obj = new ObjectPrototype(body.data);
+                var obj = new ObjectPrototype(body.data);
             
-            console.log("This object was returned by API");
-            console.log(obj);
+                console.log("This object was returned by API");
+                console.log(obj);
+            } else {
+                var obj = null;
+            }
             
             var outp = {
                 status: 200,
                 body: {
                     content: obj
                 }
-            };
+            };                
+
             callback(undefined, outp);
         });
     }

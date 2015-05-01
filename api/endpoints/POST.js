@@ -58,7 +58,6 @@ var POST = function (req, res) {
         }
         
         return res.status(statusCodes.RequestOk).json({
-            objectType: data._type,
             data: data
         });
     };
