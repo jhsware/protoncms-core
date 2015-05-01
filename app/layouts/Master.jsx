@@ -15,6 +15,7 @@ var UserWidget = React.createClass({
         return (
             <li className="mainMenu-userWidget">
                 <Link className="mainMenu-itemLink" to="/users/login">Login</Link>
+                {this.context.currentUser.title}
             </li>
         );
     }
@@ -29,7 +30,7 @@ var Master = React.createClass({
     getChildContext: function () {
         var user = global.currentUser;
         return {
-            currentUser: user
+            currentUser: {title: "TEST"}
         };
     },
     getInitialState: function () {

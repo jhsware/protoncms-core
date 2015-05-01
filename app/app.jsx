@@ -38,7 +38,8 @@ var network = require('./network');
 require('./layouts/AutoForm');
 
 function renderApp(req, res, next) {
-    // TODO: Get current user (in window render too!)
+    
+    global.currentUser = req.user;
     
     Router.run(routes, req.path, function (Handler, state) {
         var dataFetchers = state.routes.filter(function (route) {
@@ -57,11 +58,14 @@ function renderApp(req, res, next) {
 
             fetchData(state.params, function (err, result) {
                 if (err || result.status != 200) {
-                    // Allow mounted error handler in server.js handle this
+                    // TODO: Handle error
                     console.log("[APP] got an error");
                     console.log(err);
                     return next(err);
                 }
+                
+                // Add the currently logged in user to the request
+                result.body.currentUser = global.currentUser;
                 
                 try {
                     var html = React.renderToString(<Handler params={state.params} data={result.body} />);
@@ -80,7 +84,6 @@ function renderApp(req, res, next) {
 }
 
 if (typeof window !== 'undefined') {
-    // TODO: Get current user (in server render too!)
 
     // Perform routing
     Router.run(routes, Router.HistoryLocation, function (Handler, state) {
@@ -97,6 +100,8 @@ if (typeof window !== 'undefined') {
                 // We got data from the server so we use it instead of making a new call to
                 // the api
                 var content = network.deserialize(window.serverData);
+                // Store current user in global variable
+                global.currentUser = content.currentUser;
                 
                 // Need to clear the data so we make proper calls on next client render
                 window.serverData = undefined;
@@ -118,6 +123,10 @@ if (typeof window !== 'undefined') {
                         //return alert("We got an error! See console");
                     } else {
                         // All is ok, just render the page
+                        
+                        // But first add current user
+                        result.body.currentUser = window.currentUser;
+                        
                         try {
                             return React.render(<Handler params={state.params} data={result.body} />, document);
                         
