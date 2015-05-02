@@ -6,6 +6,9 @@ var React = require('react'),
 var ReactRouter = require('react-router');
 var Link        = ReactRouter.Link;
 
+var Navbar = require('react-bootstrap').Navbar;
+var Nav = require('react-bootstrap').Nav;
+
 var ITopMenuUserWidget = require('../interfaces').ITopMenuUserWidget;
 require('./topMenu/UserWidget');
 
@@ -73,18 +76,14 @@ var Master = React.createClass({
                 </head>
 
                 <body>
-                    <ul className="mainMenu">
-                        <li className="mainMenu-item mainMenu-toggleContentMenu">
-                            <span className="mainMenu-itemText">CM</span>
-                        </li>
+                    
+                    <Navbar brand='ProtonCMS' className="mainMenu" inverse toggleNavKey={0}>
             
-                        <li className="mainMenu-item mainMenu-title">
-                            <span className="mainMenu-itemText">ProtonCMS</span>
-                        </li>
+                        <Nav right eventKey={0}>
+                            <UserWidget />
+                        </Nav>
             
-                        <UserWidget />
-            
-                    </ul>
+                    </Navbar>
                     <ul className="contentMenu">
                         <li className="contentMenu-item">
                             <Link className="contentMenu-itemLink" to="/users">Users</Link>
