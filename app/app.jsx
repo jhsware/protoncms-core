@@ -66,7 +66,11 @@ function renderApp(req, res, next) {
                 }
                 
                 try {
-                    var html = React.renderToString(<Handler params={state.params} currentUser={result.currentUser} data={result.data} />);
+                    var html = React.renderToString(<Handler 
+                                                        params={state.params}
+                                                        serverMessage={result.message} 
+                                                        currentUser={result.currentUser}
+                                                        data={result.data} />);
                 } catch (e) {
                     console.log("[APP] error when rendering view");
                     console.error(e);
@@ -108,7 +112,11 @@ if (typeof window !== 'undefined') {
                 global.serverData = undefined;
                 
                 try {
-                    return React.render(<Handler params={state.params} currentUser={result.currentUser} data={result.data} />, document);
+                    return React.render(<Handler 
+                                            params={state.params}
+                                            serverMessage={result.message} 
+                                            currentUser={result.currentUser}
+                                            data={result.data} />, document);
                     
                 } catch (e) {
                     console.log("[APP] error when rendering view");
@@ -125,6 +133,7 @@ if (typeof window !== 'undefined') {
                         }
                         // TODO: Show error modal
                         //return alert("We got an error! See console");
+                        result.message = "We got an error!";
                     }
                     // All is ok, just render the page
                     
@@ -138,7 +147,11 @@ if (typeof window !== 'undefined') {
                     }
                     
                     try {
-                        return React.render(<Handler params={state.params} currentUser={result.currentUser} data={result.data} />, document);
+                        return React.render(<Handler 
+                                                params={state.params} 
+                                                serverMessage={result.message} 
+                                                currentUser={result.currentUser} 
+                                                data={result.data} />, document);
                     
                     } catch (e) {
                         console.log("[APP] error when rendering view");

@@ -28,6 +28,10 @@ passport.use(new LocalStrategy(
           
           user = user[0];
           
+          if (typeof user === "undefined") {
+            return done(null, false, { message: "We couldn't find the user :(" });
+          }
+          
           if (user.birth_year != password) {
             return done(null, false, { message: 'Incorrect password.' });
           }

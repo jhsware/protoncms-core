@@ -44,15 +44,6 @@ h1 {
     position: relative;
 }
 
-
-.btn {
-    margin: 0 1em;
-    
-    &:first-child {
-        margin-left: 0;
-    }
-}
-
 .formActionBar {
     
     padding: 1em 0;
@@ -71,4 +62,77 @@ h1 {
 
 .formActionBar-actions {
     
+}
+
+/*
+
+    MODAL
+
+*/
+
+.ReactModal__Overlay {
+  -webkit-perspective: 600;
+  perspective: 600;
+  opacity: 0;
+  overflow-x: hidden;
+  overflow-y: auto;
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+.ReactModal__Overlay--after-open {
+  opacity: 1;
+  transition: opacity 150ms ease-out;
+}
+
+.ReactModal__Content {
+  -webkit-transform: scale(0.5) rotateX(-30deg);
+}
+
+.ReactModal__Content--after-open {
+  -webkit-transform: scale(1) rotateX(0deg);
+  transition: all 150ms ease-in;
+}
+
+.ReactModal__Overlay--before-close {
+  opacity: 0;
+}
+
+.ReactModal__Content--before-close {
+  -webkit-transform: scale(0.5) rotateX(30deg);
+  transition: all 150ms ease-in;
+}
+
+.ReactModal__Content.modal-dialog {
+  border: none;
+  background-color: transparent;
+}
+
+.ReactModal__Overlay {
+    background-color: rgba(0, 0, 0, 0.75);
+    text-align: center;
+}
+.ReactModal__Content {
+    position: relative;
+    display: inline-block;
+    margin-top: 10%;
+    width: 95%;
+    max-width: 40em;
+    min-height: 25em;
+    max-height: 80%;
+    border: 1px solid #ccc;
+    background: #fff;
+    overflow: auto;
+    -webkit-overflow-scrolling: touch;
+    border-radius: 4px;
+    outline: none;
+    padding: 20px;
+}
+@media (max-width: 768px) {
+    .ReactModal__Content {
+        top: 10px;
+        left: 10px;
+        right: 10px;
+        bottom: 10px;
+        padding: 10px;
+    }
 }
