@@ -6,15 +6,10 @@ var React = require('react'),
 var ReactRouter = require('react-router');
 var Link        = ReactRouter.Link;
 
-// NOTE: This is using https://github.com/M6Web/react-modal/network
-// But more activity on https://github.com/rackt/react-modal however that one is
-// currently not server side rendering compatible
-// TODO: Switch to working version from rackt when available
-var Modal = require('react-modal');
+var Modal = require('./modal');
 
 var Navbar = require('react-bootstrap').Navbar;
 var Nav = require('react-bootstrap').Nav;
-var Button = require('react-bootstrap').Button;
 
 var ITopMenuUserWidget = require('../interfaces').ITopMenuUserWidget;
 require('./topMenu/UserWidget');
@@ -33,38 +28,17 @@ var Master = React.createClass({
     },
     getInitialState: function () {
         return {
-            serverDataRead: false,
-            mountModal: false,
-            showModal: false
+            serverDataRead: false
         }
     },
     
     componentDidMount: function () {
-        var appElement = document.getElementById('modal');
-
-        Modal.setAppElement(appElement);
-        
-        
         global.initialServerState = global.serverData;
         var state = this.state;
         state.serverDataRead = true;
-        state.mountModal = true;
-        state.showModal = typeof this.props.message !== "undefined";
         return this.setState(state);
     },
-    
-    componentWillReceiveProps: function (nextProps) {
-        var state = this.state;
-        state.showModal = typeof nextProps.serverMessage !== "undefined";
-        this.setState(state);
-    },
-    
-    closeModal: function (e) {
-        var state = this.state;
-        state.showModal = false;
-        this.setState(state);        
-    },
-    
+        
     render: function() {
         var data = this.props.data || {};
         
@@ -83,24 +57,7 @@ var Master = React.createClass({
         } else {
             var UserWidget = global.utilityRegistry.getUtility(ITopMenuUserWidget).ReactComponent;
         }
-        
-        if (this.state.mountModal) {
-            var ModalWidget = (<Modal
-                isOpen={this.state.showModal}
-                onRequestClose={this.closeModal}
-                closeTimeoutMS={0}>
-                    <h1>Server Error!</h1>
-                    <p>{this.props.serverMessage}</p>
-                    <Button 
-                        bsStyle='success'
-                        bsSize='large'
-                        block
-                        onClick={this.closeModal}>Ok</Button>
-            </Modal>)
-        } else {
-            var ModalWidget;
-        }
-        
+                
         return (
             <html>
                 <head>
@@ -123,7 +80,7 @@ var Master = React.createClass({
                 <body>
             
                     <div id="modal" className="padbox">
-                        {ModalWidget}
+                        <Modal message={this.props.serverMessage} />
                     </div>
                     
                     <Navbar brand='ProtonCMS' className="mainMenu" inverse toggleNavKey={0}>
