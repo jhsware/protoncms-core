@@ -4,8 +4,6 @@ var httpinvoke = require('httpinvoke');
 
 var IDataFetcher = require('../interfaces').IDataFetcher;
 
-var components = require('../components');
-
 var FetchDataUtility = createUtility({
     implements: IDataFetcher,
     name: 'createObject',
@@ -20,15 +18,9 @@ var FetchDataUtility = createUtility({
             role: 'editor'
         });
         
-        console.log("Created [" + obj._implements[0].name + "] " + obj._implements[0].interfaceId);
-        
-        var outp = {
-            status: 200,
-            body: {
-                content: obj
-            }
-        };
-        callback(undefined, outp);
+        callback(undefined, {
+            data: obj
+        }, 200);
         
     }
 });

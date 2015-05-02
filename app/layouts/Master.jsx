@@ -6,20 +6,8 @@ var React = require('react'),
 var ReactRouter = require('react-router');
 var Link        = ReactRouter.Link;
 
-var UserWidget = React.createClass({
-    contextTypes: {
-         currentUser: React.PropTypes.object
-    },
-    
-    render: function () {
-        return (
-            <li className="mainMenu-userWidget">
-                <Link className="mainMenu-itemLink" to="/users/login">Login</Link>
-                {this.context.currentUser.title}
-            </li>
-        );
-    }
-});
+var ITopMenuUserWidget = require('../interfaces').ITopMenuUserWidget;
+require('./topMenu/UserWidget');
 
 var Master = React.createClass({
     
@@ -28,9 +16,9 @@ var Master = React.createClass({
     },
     
     getChildContext: function () {
-        var user = global.currentUser;
+        var user = this.props.currentUser;
         return {
-            currentUser: {title: "TEST"}
+            currentUser: user
         };
     },
     getInitialState: function () {
@@ -40,7 +28,7 @@ var Master = React.createClass({
     },
     
     componentDidMount: function () {
-        window.initialServerState = window.serverData;
+        global.initialServerState = global.serverData;
         var state = this.state;
         state.serverDataRead = true;
         return this.setState(state);
@@ -50,11 +38,20 @@ var Master = React.createClass({
         var data = this.props.data || {};
         
         if (!this.state.serverDataRead) {
-            var tmp = JSON.stringify(this.props.data);
+            var tmp = JSON.stringify({
+                currentUser: this.props.currentUser,
+                data: this.props.data
+            });
             var serverData = "var serverData = " + tmp + ";";            
         } else {
             var serverData = "// Data has been picked up by client"
         };
+        
+        if (typeof this.props.currentUser !== "undefined") {
+            var UserWidget = global.adapterRegistry.getAdapter(this.props.currentUser, ITopMenuUserWidget).ReactComponent;
+        } else {
+            var UserWidget = global.utilityRegistry.getUtility(ITopMenuUserWidget).ReactComponent;
+        }
         
         return (
             <html>
@@ -77,16 +74,27 @@ var Master = React.createClass({
 
                 <body>
                     <ul className="mainMenu">
-                        <li className="mainMenu-toggleContentMenu">CM</li>
-                        <li className="mainMenu-title">ProtonCMS</li>
+                        <li className="mainMenu-item mainMenu-toggleContentMenu">
+                            <span className="mainMenu-itemText">CM</span>
+                        </li>
+            
+                        <li className="mainMenu-item mainMenu-title">
+                            <span className="mainMenu-itemText">ProtonCMS</span>
+                        </li>
             
                         <UserWidget />
             
                     </ul>
                     <ul className="contentMenu">
-                        <li className="contentMenu-item"><Link className="contentMenu-itemLink" to="/users">Users</Link></li>
-                        <li className="contentMenu-item"><Link className="contentMenu-itemLink" to="/content">Content</Link></li>
-                        <li className="contentMenu-item"><Link className="contentMenu-itemLink" to="/settings">Settings</Link></li>
+                        <li className="contentMenu-item">
+                            <Link className="contentMenu-itemLink" to="/users">Users</Link>
+                        </li>
+                        <li className="contentMenu-item">
+                            <Link className="contentMenu-itemLink" to="/content">Content</Link>
+                        </li>
+                        <li className="contentMenu-item">
+                            <Link className="contentMenu-itemLink" to="/settings">Settings</Link>
+                        </li>
                     </ul>
                     <div className="page">
                         <RouteHandler {...this.props} />

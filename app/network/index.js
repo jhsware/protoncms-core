@@ -1,9 +1,11 @@
 'use strict';
 
+require('./noData');
 require('./createObject');
 require('./listObjects');
 require('./getObjectById');
 require('./login');
+require('./logout');
 require('./notFound');
 
 var exportAllFrom = function (requiredModule) {

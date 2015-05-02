@@ -39,7 +39,7 @@ var login = function(req, res, next) {
         
             // Whis means success, TODO: We should filter what data we return here!
             return res.status(statusCodes.RequestOk).json({
-                data: user
+                currentUser: user
             });
         });
     })(req, res, next); // Don't forget to call the returnet authenticator!!!

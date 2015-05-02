@@ -12,6 +12,7 @@ require('./database/mongodb')(global);
 
 // LOGIN
 router.post('/login', jsonParser, require('./endpoints/login'));
+router.get('/logout', jsonParser, require('./endpoints/logout'));
 
 // CREATE
 router.post('/:objectType', require('./endpoints/POST'));

@@ -6,7 +6,7 @@ var httpinvoke = require('httpinvoke');
 var IDataFetcher = require('../interfaces').IDataFetcher;
 var IDatabaseService = require('../interfaces').IDatabaseService;
 
-var components = require('../components');
+var deserialize = require('./deserialize').deserialize;
 
 var FetchDataUtility = createUtility({
     implements: IDataFetcher,
@@ -42,24 +42,17 @@ var FetchDataUtility = createUtility({
         }, function (err, body, statusCode, headers) {
             if (err) {
                 console.error('Server Error:');
-                return console.log(err);
-            }; 
-            
-            
-            var objList = body.data.map(function (item) {
-                var ObjectPrototype = components[item._type];
-                var obj = new ObjectPrototype(item);
-                // console.log("Created [" + obj._implements[0].name + "] " + obj._implements[0].interfaceId);
-                return obj;
-            })
-            
-            var outp = {
-                status: 200,
-                body: {
-                    content: objList
-                }
+                return callback(err);
             };
-            callback(undefined, outp);
+
+            if (statusCode != 200) {
+                console.error('Server Error:');
+                return callback(undefined, body, statusCode);
+            };
+
+            
+            var body = deserialize(body);
+            callback(undefined, body);
         });
         
     }

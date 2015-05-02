@@ -4,7 +4,7 @@ var httpinvoke = require('httpinvoke');
 
 var IApiCall = require('../interfaces').IApiCall;
 
-var components = require('../components');
+var deserialize = require('./deserialize').deserialize;
 
 var ApiCallUtility = createUtility({
     implements: IApiCall,
@@ -36,13 +36,8 @@ var ApiCallUtility = createUtility({
                 return callback(err);
             };
             
-            console.log("Result from API");
-            console.log(body);
-            
-            var outp = {
-                data: body.data
-            };
-            callback(undefined, outp, statusCode);
+            var body = deserialize(body);
+            callback(undefined, body, statusCode);
         });
     }
 });

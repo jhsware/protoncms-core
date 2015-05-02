@@ -12,7 +12,8 @@ module.exports = (
         <DefaultRoute handler={require('./pages/list')} />
     
         <Route name="login" path="/users/login" handler={require('./pages/login')} />
-    
+        <Route name="logout" path="/users/logout" handler={require('./pages/logout')} />
+        
         <Route path="/:parentId" handler={require('./pages/list')} />
         
         <Route name="createObject" path="/:parentId/:objectType/create" handler={require('./pages/create')} />

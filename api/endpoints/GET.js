@@ -34,8 +34,13 @@ var GET = function (req, res) {
         
     // Submitted object passed validation so let's persist it to the backen
     console.log("Let's get this object...");
+    if (!req.user) {
+        return res.status(statusCodes.AuthenticationError).json({
+            message: "You aren't logged in!"
+        });
+    }
+    var principal = req.user;
     
-    var principal = req.user || new Principal({_principalId: 'anonymous'});
     var dbUtil = global.utilityRegistry.getUtility(IDatabaseService, 'mongodb');
     
     dbUtil.fetchById(principal, objectType, objectId, function (err, obj) {
@@ -46,6 +51,7 @@ var GET = function (req, res) {
         
         // Let's return the result
         return res.status(statusCodes.RequestOk).json({
+            currentUser: req.user,
             data: obj
         });
         

@@ -26,13 +26,14 @@ var QUERY = function (req, res) {
     var query = req.params.query;
 
     // End data validation
-    console.log('*** QUERY RECEIVED *** ');
-    console.log(objectType);
     
+    if (!req.user) {
+        return res.status(statusCodes.AuthenticationError).json({
+            message: "You aren't logged in!"
+        });
+    }
+    var principal = req.user;
     
-    console.log("Let's get these objects...");
-    
-    var principal = req.user || new Principal({_principalId: 'anonymous'});
     var dbUtil = global.utilityRegistry.getUtility(IDatabaseService, 'mongodb');
     
     dbUtil.query(principal, objectType, query, function (err, docs) {
@@ -44,7 +45,7 @@ var QUERY = function (req, res) {
         }
 
         return res.status(statusCodes.RequestOk).json({
-            status: 'ok',
+            currentUser: req.user,
             data: docs
         });
     });

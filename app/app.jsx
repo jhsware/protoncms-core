@@ -55,19 +55,18 @@ function renderApp(req, res, next) {
             var routePath = dataFetchers[0].path;
 
             fetchData(state.params, function (err, result) {
-                if (err || result.status != 200) {
-                    // TODO: Handle error
-                    console.log("[APP] got an error");
-                    console.log(err);
-                    return next(err);
+                if (err) {
+                    // Pass error object to
+                    console.log("[APP] We got an error!");
+                    if (err && err.message) {
+                        console.log(err && err.message);
+                    }
+                    // TODO: Show error modal
+                    //return alert("We got an error! See console");
                 }
                 
-                // Add the currently logged in user to the request, but we need to stringify and
-                // deserialize so we are sure that it looks the same as the data sent to the client
-                result.body.currentUser = network.deserialize(JSON.stringify(res.req.user));
-                
                 try {
-                    var html = React.renderToString(<Handler params={state.params} data={result.body} />);
+                    var html = React.renderToString(<Handler params={state.params} currentUser={result.currentUser} data={result.data} />);
                 } catch (e) {
                     console.log("[APP] error when rendering view");
                     console.error(e);
@@ -83,7 +82,9 @@ function renderApp(req, res, next) {
 }
 
 if (typeof window !== 'undefined') {
-
+    
+    var currentUser;
+    
     // Perform routing
     Router.run(routes, Router.HistoryLocation, function (Handler, state) {
         var dataFetchers = state.routes.filter(function (route) {
@@ -94,19 +95,20 @@ if (typeof window !== 'undefined') {
             var routeName = dataFetchers[0].name;
             var fetchData = dataFetchers[0].handler.fetchData;
             
-            if (typeof window.serverData !== 'undefined') {
+            if (typeof global.serverData !== 'undefined') {
                 
                 // We got data from the server so we use it instead of making a new call to
                 // the api
-                var content = network.deserialize(window.serverData);
-                // Store current user in global variable
-                global.currentUser = content.currentUser;
+                var result = network.deserialize(window.serverData);
+
+                // Store current user in cache variable
+                currentUser = result.currentUser;
                 
                 // Need to clear the data so we make proper calls on next client render
-                window.serverData = undefined;
+                global.serverData = undefined;
                 
                 try {
-                    return React.render(<Handler params={state.params} data={content} />, document);
+                    return React.render(<Handler params={state.params} currentUser={result.currentUser} data={result.data} />, document);
                     
                 } catch (e) {
                     console.log("[APP] error when rendering view");
@@ -115,26 +117,34 @@ if (typeof window !== 'undefined') {
             } else {
                 // When running on client we make proper API-calls
                 fetchData(state.params, function (err, result) {
-                    if (err || result.status != 200) {
+                    if (err) {
                         // Pass error object to
                         console.log("[APP] We got an error!");
+                        if (err && err.message) {
+                            console.log(err && err.message);
+                        }
                         // TODO: Show error modal
                         //return alert("We got an error! See console");
-                    } else {
-                        // All is ok, just render the page
-                        
-                        // But first add current user
-                        result.body.currentUser = window.currentUser;
-                        
-                        try {
-                            return React.render(<Handler params={state.params} data={result.body} />, document);
-                        
-                        } catch (e) {
-                            console.log("[APP] error when rendering view");
-                            console.error(e.stack);
-                        }
-                    
                     }
+                    // All is ok, just render the page
+                    
+                    // But first add current user if the result doesn't contain it
+                    // unless we get a logout property. If currentUser is passed, 
+                    // update the currentUser cache object
+                    if (!result.hasOwnProperty('currentUser') && !result.logout) {
+                        result.currentUser = currentUser;
+                    } else {
+                        currentUser = result.currentUser;
+                    }
+                    
+                    try {
+                        return React.render(<Handler params={state.params} currentUser={result.currentUser} data={result.data} />, document);
+                    
+                    } catch (e) {
+                        console.log("[APP] error when rendering view");
+                        console.error(e.stack);
+                    }
+                    
                 });                
             }
 

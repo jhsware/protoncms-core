@@ -45,8 +45,13 @@ var POST = function (req, res) {
     };
     
     // Submitted object passed validation so let's persist it to the backen
-    console.log("Let's persist this guy...");
-    var principal = req.user || new Principal({_principalId: 'anonymous'});
+    if (!req.user) {
+        return res.status(statusCodes.AuthenticationError).json({
+            message: "You aren't logged in!"
+        });
+    }
+    var principal = req.user;
+    
     var dbUtil = global.utilityRegistry.getUtility(IDatabaseService, 'mongodb');
     
     var callback = function (err, data) {
@@ -58,6 +63,7 @@ var POST = function (req, res) {
         }
         
         return res.status(statusCodes.RequestOk).json({
+            currentUser: req.user,
             data: data
         });
     };

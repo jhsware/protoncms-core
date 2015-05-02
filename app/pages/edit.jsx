@@ -13,7 +13,7 @@ var Page = React.createClass({
     
     render: function() {
         
-        var obj = this.props.data.content;
+        var obj = this.props.data;
         var ReactComponent = global.adapterRegistry.getAdapter(obj, IEditObject).ReactComponent;
         
         var parentId = this.props.params.parentId; 

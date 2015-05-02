@@ -54,9 +54,9 @@ module.exports.IContentMenuItem = createInterface({
     }
 });
 
-module.exports.IUserWidget = createInterface({
+module.exports.ITopMenuUserWidget = createInterface({
     // adapts IUserSession
-    name: 'IUserWidget',
+    name: 'ITopMenuUserWidget',
     members: {
         ReactComponent: "ReactComponent"
     }

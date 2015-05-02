@@ -6,6 +6,8 @@ var httpinvoke = require('httpinvoke');
 var IProtonObjectPersist = require('../../interfaces').IProtonObjectPersist;
 var IProtonObject = require('../../interfaces').IProtonObject;
 
+var deserialize = require('../../network/deserialize').deserialize;
+
 var ProtonObjectPersist = createAdapter({
     implements: IProtonObjectPersist,
     adapts: IProtonObject,
@@ -17,17 +19,6 @@ var ProtonObjectPersist = createAdapter({
         
         var apiPath = "/api/" + this.context._type + '/' + this.context._id;
         
-        /*
-        var data = {};
-        console.log("Persisting to backend:");
-        for(var key in this.context){
-            // check also if property is not inherited from prototype
-            if (this.context.hasOwnProperty(key)) { 
-                data[key] = this.context[key];
-                console.log(key + ": " + this.context[key]);
-            }
-        }
-        */
         var data = this.context.toJSON();
         
         httpinvoke(apiPath, "POST", {
@@ -43,9 +34,13 @@ var ProtonObjectPersist = createAdapter({
             },
             timeout: 5000
         }, function (err, body, statusCode, headers) {
+            var body = deserialize(body);
+            
             if (err || statusCode != 200) {
-                return callback(err, body);
+                return callback(err, body, statusCode);
             }; 
+            
+            
             return callback(undefined, body, statusCode);
         });
         
