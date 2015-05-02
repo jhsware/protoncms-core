@@ -1,5 +1,8 @@
 'use strict';
 var createObjectPrototype = require('component-registry').createObjectPrototype;
+var createUtility = require('component-registry').createUtility;
+
+var IObjectPrototypeFactory = require('../../interfaces').IObjectPrototypeFactory;
 
 var ProtonObject = require('../ProtonObject');
 var Principal = require('../../permissions').Principal;
@@ -23,6 +26,22 @@ var User = createObjectPrototype({
 })
 
 module.exports = User;
+
+var ObjectPrototypeFactory = createUtility({
+    implements: IObjectPrototypeFactory,
+    name: 'User',
+    
+    getPrototype: function () {
+        return User;
+    },
+    
+    getObject: function (data) {
+        return new User(data);
+    }
+});
+
+global.utilityRegistry.registerUtility(ObjectPrototypeFactory);
+
 
 // Import views
 require('./listItem');

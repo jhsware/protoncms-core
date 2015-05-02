@@ -2,41 +2,38 @@
 var createUtility = require('component-registry').createUtility;
 var httpinvoke = require('httpinvoke');
 
-var IDataFetcher = require('../interfaces').IDataFetcher;
+var IApiCall = require('../interfaces').IApiCall;
 
 var deserialize = require('./deserialize').deserialize;
 
-var FetchDataUtility = createUtility({
-    implements: IDataFetcher,
-    name: 'fetchObjectById',
+var ApiCallUtility = createUtility({
+    implements: IApiCall,
+    name: 'logout',
     
-    fetchData: function (params, callback) {
+    logout: function (params, callback) {
         
         if (typeof Window === 'undefined') {
             var host = 'http://127.0.0.1:5000';
         } else {
             var host = '';
         }
-        var apiPath = host + "/api/" + params.parentId + '/' + params.objectId;
+        var apiPath = host + "/api/logout";
         
         httpinvoke(apiPath, "GET", {
             outputType: "json",
-            converters: {'text json': JSON.parse},
-            timeout: 5000
+            converters: {
+                'json text': JSON.stringify,
+                'text json': JSON.parse
+            },
         }, function (err, body, statusCode, headers) {
             if (err) {
                 console.error('Server Error:');
                 return callback(err);
             };
-
-            if (statusCode != 200) {
-                console.error('Server Error:');
-                return callback(undefined, body, statusCode);
-            };
-
+            
             var body = deserialize(body);
-            callback(undefined, body);
+            callback(undefined, body, statusCode);
         });
     }
 });
-global.utilityRegistry.registerUtility(FetchDataUtility);
+global.utilityRegistry.registerUtility(ApiCallUtility);

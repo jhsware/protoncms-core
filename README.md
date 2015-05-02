@@ -27,6 +27,8 @@ And if you need to debug a test just add --debug-brk and start node-inspector.
 
 ### TODO ###
 
+TODO: Issue with input components, see https://github.com/facebook/react/issues/1950
+
 TODO: Favicon
     "serve-favicon": "~2.1.3",
 

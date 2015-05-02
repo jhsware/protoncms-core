@@ -1,18 +1,19 @@
 'use strict';
 var createUtility = require('component-registry').createUtility;
+var httpinvoke = require('httpinvoke');
 
 var IDataFetcher = require('../interfaces').IDataFetcher;
 
+var components = require('../components');
+
 var FetchDataUtility = createUtility({
     implements: IDataFetcher,
-    name: 'notFound',
+    name: 'noData',
     
     fetchData: function (params, callback) {
-        var outp = {
-            title: "Sorry! We couldn't find the page you were looking for :(",
-            description: 'No description'
-        };
-        callback(undefined, outp, 404);
+        
+        callback(undefined, {}, 200);
+        
     }
 });
 global.utilityRegistry.registerUtility(FetchDataUtility);

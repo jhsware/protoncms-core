@@ -19,7 +19,7 @@ var Page = React.createClass({
         var parentId = this.props.params.parentId || 'default';
         var data = this.props.data;
         
-        var contentEls = data.content.map(function (obj, i) {
+        var contentEls = data && data.map(function (obj, i) {
             var listView = global.adapterRegistry.getAdapter(obj, IListItemView);
             var ReactComponent = listView.ReactComponent;
             return <ReactComponent key={'item-' + i} context={obj} />;            

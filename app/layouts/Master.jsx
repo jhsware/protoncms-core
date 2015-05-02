@@ -6,19 +6,13 @@ var React = require('react'),
 var ReactRouter = require('react-router');
 var Link        = ReactRouter.Link;
 
-var UserWidget = React.createClass({
-    contextTypes: {
-         currentUser: React.PropTypes.object
-    },
-    
-    render: function () {
-        return (
-            <li className="mainMenu-userWidget">
-                <Link className="mainMenu-itemLink" to="/users/login">Login</Link>
-            </li>
-        );
-    }
-});
+var Modal = require('./modal');
+
+var Navbar = require('react-bootstrap').Navbar;
+var Nav = require('react-bootstrap').Nav;
+
+var ITopMenuUserWidget = require('../interfaces').ITopMenuUserWidget;
+require('./topMenu/UserWidget');
 
 var Master = React.createClass({
     
@@ -27,13 +21,43 @@ var Master = React.createClass({
     },
     
     getChildContext: function () {
-        var user = global.currentUser;
+        var user = this.props.currentUser;
         return {
             currentUser: user
         };
     },
+    getInitialState: function () {
+        return {
+            serverDataRead: false
+        }
+    },
+    
+    componentDidMount: function () {
+        global.initialServerState = global.serverData;
+        var state = this.state;
+        state.serverDataRead = true;
+        return this.setState(state);
+    },
+        
     render: function() {
         var data = this.props.data || {};
+        
+        if (!this.state.serverDataRead) {
+            var tmp = JSON.stringify({
+                currentUser: this.props.currentUser,
+                data: this.props.data
+            });
+            var serverData = "var serverData = " + tmp + ";";            
+        } else {
+            var serverData = "// Data has been picked up by client"
+        };
+        
+        if (typeof this.props.currentUser !== "undefined") {
+            var UserWidget = global.adapterRegistry.getAdapter(this.props.currentUser, ITopMenuUserWidget).ReactComponent;
+        } else {
+            var UserWidget = global.utilityRegistry.getUtility(ITopMenuUserWidget).ReactComponent;
+        }
+                
         return (
             <html>
                 <head>
@@ -48,21 +72,34 @@ var Master = React.createClass({
                     <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap-theme.min.css" />
 
                     <link rel="stylesheet" href="/assets/css/app.css" />
+            
+                    <script dangerouslySetInnerHTML={{__html: serverData}}></script>
 
                 </head>
 
                 <body>
-                    <ul className="mainMenu">
-                        <li className="mainMenu-toggleContentMenu">CM</li>
-                        <li className="mainMenu-title">ProtonCMS</li>
             
-                        <UserWidget />
+                    <div id="modal" className="padbox">
+                        <Modal message={this.props.serverMessage} />
+                    </div>
+                    
+                    <Navbar brand='ProtonCMS' className="mainMenu" inverse toggleNavKey={0}>
             
-                    </ul>
+                        <Nav right eventKey={0}>
+                            <UserWidget />
+                        </Nav>
+            
+                    </Navbar>
                     <ul className="contentMenu">
-                        <li className="contentMenu-item"><Link className="contentMenu-itemLink" to="/users">Users</Link></li>
-                        <li className="contentMenu-item"><Link className="contentMenu-itemLink" to="/content">Content</Link></li>
-                        <li className="contentMenu-item"><Link className="contentMenu-itemLink" to="/settings">Settings</Link></li>
+                        <li className="contentMenu-item">
+                            <Link className="contentMenu-itemLink" to="/users">Users</Link>
+                        </li>
+                        <li className="contentMenu-item">
+                            <Link className="contentMenu-itemLink" to="/content">Content</Link>
+                        </li>
+                        <li className="contentMenu-item">
+                            <Link className="contentMenu-itemLink" to="/settings">Settings</Link>
+                        </li>
                     </ul>
                     <div className="page">
                         <RouteHandler {...this.props} />

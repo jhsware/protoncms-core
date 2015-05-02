@@ -3,6 +3,8 @@ var React = require('react');
 var createAdapter = require('component-registry').createAdapter;
 
 var IApiCall = require('../interfaces').IApiCall;
+var IDataFetcher = require('../interfaces').IDataFetcher;
+
 var IActionButtonWidget = require('schema-react-formlib').interfaces.IActionButtonWidget;
 var IAutoFormWidget = require('../interfaces').IAutoFormWidget;
 var loginForm = require('../forms/loginForm');
@@ -13,9 +15,15 @@ var FormActionBar = require('../layouts/FormActionBar');
 
 
 var Page = React.createClass({
-        
+            
     contextTypes: {
         router: React.PropTypes.func
+    },
+
+    statics: {
+        fetchData: function (params, callback) {
+            global.utilityRegistry.getUtility(IDataFetcher, 'noData').fetchData(params, callback);
+        }
     },
 
     didUpdate: function (data) {
@@ -47,9 +55,7 @@ var Page = React.createClass({
             alert('The user could not be authenticated!');
             global.currentUser = undefined;
         } else {
-            var ObjectPrototype = components[body.data._type];
-            var user = new ObjectPrototype(body.data);
-            global.currentUser = user;
+            // The user will be picked up at the next api-call
             this.context.router.transitionTo('/');            
         }
         

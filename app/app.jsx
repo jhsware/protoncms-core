@@ -32,13 +32,12 @@ require('schema-react-formlib').registerAllWidgets({
 });
 
 // Register dataFetchers
-require('./network');
+var network = require('./network');
 
 // Register some utilities
 require('./layouts/AutoForm');
 
 function renderApp(req, res, next) {
-    // TODO: Get current user (in window render too!)
     
     Router.run(routes, req.path, function (Handler, state) {
         var dataFetchers = state.routes.filter(function (route) {
@@ -56,15 +55,22 @@ function renderApp(req, res, next) {
             var routePath = dataFetchers[0].path;
 
             fetchData(state.params, function (err, result) {
-                if (err || result.status != 200) {
-                    // Allow mounted error handler in server.js handle this
-                    console.log("[APP] got an error");
-                    console.log(err);
-                    return next(err);
+                if (err) {
+                    // Pass error object to
+                    console.log("[APP] We got an error!");
+                    if (err && err.message) {
+                        console.log(err && err.message);
+                    }
+                    // TODO: Show error modal
+                    //return alert("We got an error! See console");
                 }
                 
                 try {
-                    var html = React.renderToString(<Handler params={state.params} data={result.body} />);
+                    var html = React.renderToString(<Handler 
+                                                        params={state.params}
+                                                        serverMessage={result.message} 
+                                                        currentUser={result.currentUser}
+                                                        data={result.data} />);
                 } catch (e) {
                     console.log("[APP] error when rendering view");
                     console.error(e);
@@ -80,8 +86,9 @@ function renderApp(req, res, next) {
 }
 
 if (typeof window !== 'undefined') {
-    // TODO: Get current user (in server render too!)
-
+    
+    var currentUser;
+    
     // Perform routing
     Router.run(routes, Router.HistoryLocation, function (Handler, state) {
         var dataFetchers = state.routes.filter(function (route) {
@@ -91,24 +98,69 @@ if (typeof window !== 'undefined') {
         if (dataFetchers.length > 0) {
             var routeName = dataFetchers[0].name;
             var fetchData = dataFetchers[0].handler.fetchData;
+            
+            if (typeof global.serverData !== 'undefined') {
+                
+                // We got data from the server so we use it instead of making a new call to
+                // the api
+                var result = network.deserialize(window.serverData);
 
-            fetchData(state.params, function (err, result) {
-                if (err || result.status != 200) {
-                    // Pass error object to
-                    console.log("[APP] We got an error!");
-                    // TODO: Show error modal
-                    //return alert("We got an error! See console");
-                } else {
+                // Store current user in cache variable
+                currentUser = result.currentUser;
+                
+                // Need to clear the data so we make proper calls on next client render
+                global.serverData = undefined;
+                
+                try {
+                    return React.render(<Handler 
+                                            params={state.params}
+                                            serverMessage={result.message} 
+                                            currentUser={result.currentUser}
+                                            data={result.data} />, document);
+                    
+                } catch (e) {
+                    console.log("[APP] error when rendering view");
+                    console.error(e.stack);
+                }
+            } else {
+                // When running on client we make proper API-calls
+                fetchData(state.params, function (err, result) {
+                    if (err) {
+                        // Pass error object to
+                        console.log("[APP] We got an error!");
+                        if (err && err.message) {
+                            console.log(err && err.message);
+                        }
+                        // TODO: Show error modal
+                        //return alert("We got an error! See console");
+                        result.message = "We got an error!";
+                    }
                     // All is ok, just render the page
+                    
+                    // But first add current user if the result doesn't contain it
+                    // unless we get a logout property. If currentUser is passed, 
+                    // update the currentUser cache object
+                    if (!result.hasOwnProperty('currentUser') && !result.logout) {
+                        result.currentUser = currentUser;
+                    } else {
+                        currentUser = result.currentUser;
+                    }
+                    
                     try {
-                        return React.render(<Handler params={state.params} data={result.body} />, document);
+                        return React.render(<Handler 
+                                                params={state.params} 
+                                                serverMessage={result.message} 
+                                                currentUser={result.currentUser} 
+                                                data={result.data} />, document);
+                    
                     } catch (e) {
                         console.log("[APP] error when rendering view");
                         console.error(e.stack);
                     }
                     
-                }
-            });
+                });                
+            }
+
         } else {
             return React.render(<Handler params={state.params} />, document);
         };
