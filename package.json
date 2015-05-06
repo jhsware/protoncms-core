@@ -1,7 +1,7 @@
 {
-  "name": "simple-app",
+  "name": "protoncms",
   "version": "0.1.0",
-  "description": "Simple JS Component Registry Sample App",
+  "description": "ProtonCMS –– a node CMS framework built with React.js and a ZTK-inspired component-registry",
   "engines": {
     "node": "0.12.x"
   },
