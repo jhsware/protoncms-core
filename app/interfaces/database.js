@@ -1,7 +1,7 @@
 'use strict';
 var createInterface = require('component-registry').createInterface;
     
-module.exports.IDatabaseService = createInterface({
+module.exports.IDataService = createInterface({
     /*
     Unautheticated users access to objects in backend using
     a utility (it has no user). This is used for the public API
@@ -10,12 +10,12 @@ module.exports.IDatabaseService = createInterface({
     admin api.
     */
     
-    name: 'IDatabaseService',
+    name: 'IDataService',
     members: {
-        drop: "function",
+        clear: "function",
         create: "function",
         update: "function",
-        fetch: "function",
+        query: "function",
         delete: "function"
     }
 });

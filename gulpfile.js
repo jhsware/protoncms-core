@@ -7,6 +7,7 @@ var gulp = require('gulp'),
     sourcemaps = require('gulp-sourcemaps'),
     browserify = require('browserify'),
     watchify = require('watchify'),
+    react = require('gulp-react'),
     reactify = require('reactify'),
     buffer = require('vinyl-buffer'),
     source = require('vinyl-source-stream'),
@@ -105,18 +106,19 @@ gulp.task('clean', function (callback) {
     del(paths, callback);
 });
 
-gulp.task('run-server', function () {
-    return nodemon({
-        script: 'server.js',
-        ext: 'js jsx',
-        env: {
-            'NODE_ENV': 'development'
-        },
-        ignore: ['assets']
-    });
-});
+
+//gulp.task('build-app', function () {
+//    return gulp.src('app/**/*.jsx')
+//        .pipe(react({harmony: true}))
+//        .pipe(gulp.dest('build/app'));
+//});
+
 
 // Default watch task
+//gulp.task('watch', ['build-app'], function () {
+//    gulp.watch(['app/**/*'], ['build-app']);
+//});
+
 gulp.task('watch', ['stylus', 'watch-scripts'], function () {
     gulp.watch(['app/**/*.{styl,css}', 'app_nej/stylus/**/*.{styl,css}'], ['stylus']);
 });

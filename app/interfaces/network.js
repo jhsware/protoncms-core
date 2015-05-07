@@ -3,17 +3,23 @@
 var createInterface = require('component-registry').createInterface;
 
 /*
-    Network Utilities
+    Network ities
 */
 
 module.exports.IDataFetcher = createInterface({
-    // Utility to fetch data from server
+    // ity to fetch data from server
     name: 'IDataFetcher'
     
 });
 
 module.exports.IApiCall = createInterface({
-    // Utility to fetch data from server
+    // ity to fetch data from server
     name: 'IApiCall'
+    
+});
+
+module.exports.IDeserialize = createInterface({
+    // ity to convert data to objects
+    name: 'IDeserialize'
     
 });

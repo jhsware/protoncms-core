@@ -42,11 +42,7 @@ var ObjectPrototypeFactory = createUtility({
 
 global.utilityRegistry.registerUtility(ObjectPrototypeFactory);
 
-// Import views
+// Register views
 require('./editObject');
 require('./listItem');
 require('./dummyData');
-
-if (typeof window !== 'undefined') {
-    require('./objectPersistToApi');    
-}

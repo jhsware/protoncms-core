@@ -2,18 +2,6 @@
 
 var createInterface = require('component-registry').createInterface;
 
-module.exports.IMainStage = createInterface({
-    // adapter (render view for current session)
-    name: 'IMainStage'
-});
-
-module.exports.IListView = createInterface({
-    name: 'IListView',
-    members: {
-        ReactComponent: "ReactComponent"
-    }
-});
-   
 module.exports.IListItemView = createInterface({
     name: 'IListItemView',
     members: {
@@ -42,31 +30,10 @@ module.exports.IEditObject = createInterface({
     }
 });
 
-module.exports.IContentMenu = createInterface({
-    name: 'IContentMenu',
-});
-
-module.exports.IContentMenuItem = createInterface({
-    name: 'IContentMenuItem',
-    members: {
-        order: "integer",
-        ReactComponent: "ReactComponent"
-    }
-});
-
-module.exports.ITopMenuUserWidget = createInterface({
-    // adapts IUserSession
-    name: 'ITopMenuUserWidget',
-    members: {
-        ReactComponent: "ReactComponent"
-    }
-});
-
-var IAutoFormWidget = createInterface({
+module.exports.IAutoFormWidget = createInterface({
     name: 'IAutoFormWidget',
     // Render an object schema as a HTML form
     members: {
         ReactComponent: "ReactComponent"
     }
 });
-module.exports.IAutoFormWidget = IAutoFormWidget;

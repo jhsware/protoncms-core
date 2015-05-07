@@ -103,7 +103,7 @@ IContentMenuItem: utility
     order
     ReactComponent
 
-IUserWidget: adapts IUserSession
+Irequire('protoncms').permissions.Principal: adapts IUserSession
     ReactComponent
 
 IPersistenceService:

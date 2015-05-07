@@ -9,6 +9,4 @@ var exportAllFrom = function (requiredModule) {
 exportAllFrom(require('./components'));
 exportAllFrom(require('./network'));
 exportAllFrom(require('./views'));
-exportAllFrom(require('./workflow'));
 exportAllFrom(require('./database'));
-exportAllFrom(require('./permissions'));
