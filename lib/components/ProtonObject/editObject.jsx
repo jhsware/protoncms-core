@@ -72,7 +72,7 @@ var Component = createAdapter({
             
             var FormWidget = global.adapterRegistry.getAdapter(context, IAutoFormWidget).ReactComponent;
             
-            var ActionButton = global.utilityRegistry.getUtility(IActionButtonWidget).ReactComponent;
+            var ActionButton = global.registry.getUtility(IActionButtonWidget).ReactComponent;
             
             return (
                 <div className="IEditObject">
@@ -108,4 +108,4 @@ var Component = createAdapter({
     })
 });
 
-global.adapterRegistry.registerAdapter(Component)
+require('../../globalRegistry').registerAdapter(Component)

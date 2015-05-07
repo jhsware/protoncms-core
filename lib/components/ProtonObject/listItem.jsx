@@ -27,5 +27,5 @@ var RenderListItem = createAdapter({
     })
 });
 
-global.adapterRegistry.registerAdapter(RenderListItem)
+require('../../globalRegistry').registerAdapter(RenderListItem)
 
