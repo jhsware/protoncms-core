@@ -22,7 +22,8 @@
     "react": "~0.13.1",
     "react-router": "~0.13.2",
     "component-registry": "git://github.com/jhsware/SimpleJSRegistry.git#master",
-    "isomorphic-schema": "~0.1.0"
+    "isomorphic-schema": "git://github.com/jhsware/SimpleJSSchema.git#master",
+    "schema-dummy-data": "git://github.com/jhsware/SimpleJSSchemaDummyData.git#master"
   },
   "devDependencies": {
     "react-tools": "~0.12.1",
