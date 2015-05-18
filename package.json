@@ -1,6 +1,6 @@
 {
   "name": "protoncms-core",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "ProtonCMS –– a node CMS framework built with React.js and a ZTK-inspired component-registry",
   "repository" : { 
       "type" : "git",
