@@ -1,6 +1,6 @@
 {
   "name": "protoncms-core",
-  "version": "0.1.6",
+  "version": "0.1.7",
   "description": "ProtonCMS –– a node CMS framework built with React.js and the ZTK-inspired component-registry",
   "author": {
     "name": "Sebastian Ware",
