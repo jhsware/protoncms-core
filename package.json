@@ -21,8 +21,8 @@
   },
   "main": "./index.js",  
   "peerDependencies": {
-    "component-registry": "~0.1.1",
-    "isomorphic-schema": "~0.1.1"
+    "component-registry": ">=0.1.1",
+    "isomorphic-schema": ">=0.1.1"
   },
   "devDependencies": {
     "expect.js": "~0.3.1",
